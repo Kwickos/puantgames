@@ -19,6 +19,8 @@ const WORD_PAIRS: [string, string][] = [
   ['Camping', 'Glamping'], ['Piscine', 'Plage'], ['Beurre', 'Margarine'],
   ['Tigre', 'Lion'], ['Violon', 'Violoncelle'], ['Glace', 'Sorbet'],
   ['Canapé', 'Fauteuil'],
+  ['Karmine Corp', 'Solary'], ['G2', 'Fnatic'], ['Vitality', 'MAD KOI'],
+  ['Team Heretics', 'SK Gaming'], ['NAVI', 'GX'], ['Shifters', 'Los Ratones'],
 ]
 
 type Phase = 'describing' | 'voting' | 'result' | 'gameover'

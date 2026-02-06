@@ -12,6 +12,8 @@ import cookieParser from 'cookie-parser'
 import { RoomManager } from './roomManager.js'
 import { registerGameHandlers } from './gameHandler.js'
 import { authRouter, verifyToken } from './auth.js'
+import { initDb } from './db.js'
+import { leaderboardRouter } from './leaderboardHandler.js'
 import type {
   ClientToServerEvents,
   ServerToClientEvents,
@@ -27,6 +29,12 @@ app.use(cookieParser())
 
 // Auth routes
 app.use('/api/auth', authRouter)
+
+// Leaderboard routes
+app.use('/api/leaderboard', leaderboardRouter)
+
+// Init database
+initDb()
 
 const roomManager = new RoomManager()
 

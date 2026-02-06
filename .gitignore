@@ -26,5 +26,9 @@ dist-ssr
 # Environment variables
 .env
 
+# SQLite database
+server/data/
+
 # OS grep
 .osgrep/
+.osgrep

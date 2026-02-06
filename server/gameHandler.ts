@@ -6,6 +6,7 @@ import type {
   GameState,
 } from '../shared/types.js'
 import type { RoomManager } from './roomManager.js'
+import { recordGameResult } from './db.js'
 
 type IOServer = Server<ClientToServerEvents, ServerToClientEvents>
 type IOSocket = Socket<ClientToServerEvents, ServerToClientEvents>
@@ -191,6 +192,9 @@ export function registerGameHandlers(
           io.to(code).emit('game:state', newState)
           if (status === 'finished') {
             io.to(code).emit('game:finished', { finalScores: newState.scores })
+            if (room.gameId) {
+              recordGameResult(room.players, newState.scores, room.gameId, newState.data as Record<string, unknown>)
+            }
           }
         }
         break
@@ -214,6 +218,9 @@ export function registerGameHandlers(
           io.to(code).emit('game:state', newState)
           io.to(code).emit('game:finished', { finalScores: newState.scores })
           io.to(code).emit('room:state', rooms.getState(code)!)
+          if (room.gameId) {
+            recordGameResult(room.players, newState.scores, room.gameId, newState.data as Record<string, unknown>)
+          }
         }
         break
       }

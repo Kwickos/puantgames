@@ -1,5 +1,5 @@
 import { Outlet, Link, useLocation } from 'react-router-dom'
-import { Gamepad2, Home, LogOut, Wifi, WifiOff } from 'lucide-react'
+import { Gamepad2, Home, LogOut, Trophy, Wifi, WifiOff } from 'lucide-react'
 import { motion, AnimatePresence } from 'motion/react'
 import { useRoomStore } from '@/stores/roomStore'
 import { useAuthStore } from '@/stores/authStore'
@@ -59,17 +59,30 @@ export default function Layout() {
             )}
 
             {!room && (
-              <Link
-                to="/"
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all no-underline ${
-                  location.pathname === '/'
-                    ? 'bg-surface-light text-text-primary'
-                    : 'text-text-secondary hover:text-text-primary hover:bg-surface/60'
-                }`}
-              >
-                <Home className="w-4 h-4" />
-                Accueil
-              </Link>
+              <>
+                <Link
+                  to="/"
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all no-underline ${
+                    location.pathname === '/'
+                      ? 'bg-surface-light text-text-primary'
+                      : 'text-text-secondary hover:text-text-primary hover:bg-surface/60'
+                  }`}
+                >
+                  <Home className="w-4 h-4" />
+                  Accueil
+                </Link>
+                <Link
+                  to="/leaderboard"
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all no-underline ${
+                    location.pathname === '/leaderboard'
+                      ? 'bg-surface-light text-text-primary'
+                      : 'text-text-secondary hover:text-text-primary hover:bg-surface/60'
+                  }`}
+                >
+                  <Trophy className="w-4 h-4" />
+                  Classement
+                </Link>
+              </>
             )}
           </div>
         </div>
