@@ -1,64 +1,58 @@
-import Database from 'better-sqlite3'
-import { resolve, dirname } from 'path'
-import { fileURLToPath } from 'url'
-import { mkdirSync } from 'fs'
+import pg from 'pg'
 import type { Player } from '../shared/types.js'
 
-const __dirname = dirname(fileURLToPath(import.meta.url))
-const DB_DIR = resolve(__dirname, 'data')
-const DB_PATH = resolve(DB_DIR, 'puantgames.db')
+const pool = new pg.Pool({
+  connectionString: process.env.DATABASE_URL,
+})
 
-let db: Database.Database
-
-export function initDb(): void {
-  mkdirSync(DB_DIR, { recursive: true })
-  db = new Database(DB_PATH)
-  db.pragma('journal_mode = WAL')
-
-  db.prepare(`
+export async function initDb(): Promise<void> {
+  await pool.query(`
     CREATE TABLE IF NOT EXISTS game_results (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      discordId TEXT NOT NULL,
+      id SERIAL PRIMARY KEY,
+      discord_id TEXT NOT NULL,
       username TEXT NOT NULL,
-      avatarUrl TEXT NOT NULL,
-      gameId TEXT NOT NULL,
+      avatar_url TEXT NOT NULL,
+      game_id TEXT NOT NULL,
       score INTEGER NOT NULL DEFAULT 0,
       won INTEGER NOT NULL DEFAULT 0,
-      playedAt TEXT NOT NULL DEFAULT (datetime('now'))
+      played_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     )
-  `).run()
+  `)
 
-  db.prepare(`CREATE INDEX IF NOT EXISTS idx_game_results_discordId ON game_results(discordId)`).run()
-  db.prepare(`CREATE INDEX IF NOT EXISTS idx_game_results_gameId ON game_results(gameId)`).run()
+  await pool.query(`CREATE INDEX IF NOT EXISTS idx_game_results_discord_id ON game_results(discord_id)`)
+  await pool.query(`CREATE INDEX IF NOT EXISTS idx_game_results_game_id ON game_results(game_id)`)
 
-  console.log('[db] SQLite initialized')
+  console.log('[db] PostgreSQL initialized')
 }
 
-export function recordGameResult(
+export async function recordGameResult(
   players: Player[],
   finalScores: Record<string, number>,
   gameId: string,
   gameData: Record<string, unknown>
-): void {
+): Promise<void> {
   const connectedPlayers = players.filter(p => p.connected)
   if (connectedPlayers.length === 0) return
 
   const winners = determineWinners(connectedPlayers, finalScores, gameId, gameData)
 
-  const insert = db.prepare(`
-    INSERT INTO game_results (discordId, username, avatarUrl, gameId, score, won)
-    VALUES (?, ?, ?, ?, ?, ?)
-  `)
+  const values: unknown[] = []
+  const placeholders: string[] = []
+  let idx = 1
 
-  const insertMany = db.transaction(() => {
-    for (const player of connectedPlayers) {
-      const score = finalScores[player.id] ?? 0
-      const won = winners.has(player.id) ? 1 : 0
-      insert.run(player.discordId, player.name, player.avatar, gameId, score, won)
-    }
-  })
+  for (const player of connectedPlayers) {
+    const score = finalScores[player.id] ?? 0
+    const won = winners.has(player.id) ? 1 : 0
+    placeholders.push(`($${idx}, $${idx + 1}, $${idx + 2}, $${idx + 3}, $${idx + 4}, $${idx + 5})`)
+    values.push(player.discordId, player.name, player.avatar, gameId, score, won)
+    idx += 6
+  }
 
-  insertMany()
+  await pool.query(
+    `INSERT INTO game_results (discord_id, username, avatar_url, game_id, score, won) VALUES ${placeholders.join(', ')}`,
+    values
+  )
+
   console.log(`[db] Recorded ${connectedPlayers.length} results for ${gameId}`)
 }
 
@@ -85,7 +79,6 @@ function determineWinners(
       }
     }
   } else {
-    // Score-based games (click-race, horse-race): highest score wins
     let maxScore = -Infinity
     for (const player of players) {
       const score = finalScores[player.id] ?? 0
@@ -112,31 +105,30 @@ export interface LeaderboardEntry {
   winrate: number
 }
 
-export function getLeaderboard(gameId?: string): LeaderboardEntry[] {
-  const whereClause = gameId ? 'WHERE gameId = ?' : ''
+export async function getLeaderboard(gameId?: string): Promise<LeaderboardEntry[]> {
+  const whereClause = gameId ? 'WHERE game_id = $1' : ''
   const params = gameId ? [gameId] : []
 
-  const rows = db.prepare(`
-    SELECT
-      discordId,
+  const { rows } = await pool.query(
+    `SELECT
+      discord_id,
       username,
-      avatarUrl,
-      SUM(won) as wins,
-      COUNT(*) as played
+      avatar_url,
+      SUM(won)::int as wins,
+      COUNT(*)::int as played
     FROM game_results
     ${whereClause}
-    GROUP BY discordId
-    ORDER BY wins DESC, played ASC
-  `).all(...params) as Array<{
-    discordId: string
-    username: string
-    avatarUrl: string
-    wins: number
-    played: number
-  }>
+    GROUP BY discord_id, username, avatar_url
+    ORDER BY wins DESC, played ASC`,
+    params
+  )
 
-  return rows.map(row => ({
-    ...row,
+  return rows.map((row: { discord_id: string; username: string; avatar_url: string; wins: number; played: number }) => ({
+    discordId: row.discord_id,
+    username: row.username,
+    avatarUrl: row.avatar_url,
+    wins: row.wins,
+    played: row.played,
     winrate: row.played > 0 ? Math.round((row.wins / row.played) * 100) : 0,
   }))
 }

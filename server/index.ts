@@ -34,7 +34,7 @@ app.use('/api/auth', authRouter)
 app.use('/api/leaderboard', leaderboardRouter)
 
 // Init database
-initDb()
+await initDb()
 
 const roomManager = new RoomManager()
 

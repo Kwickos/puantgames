@@ -194,6 +194,7 @@ export function registerGameHandlers(
             io.to(code).emit('game:finished', { finalScores: newState.scores })
             if (room.gameId) {
               recordGameResult(room.players, newState.scores, room.gameId, newState.data as Record<string, unknown>)
+                .catch(err => console.error('[db] recordGameResult error:', err))
             }
           }
         }
@@ -220,6 +221,7 @@ export function registerGameHandlers(
           io.to(code).emit('room:state', rooms.getState(code)!)
           if (room.gameId) {
             recordGameResult(room.players, newState.scores, room.gameId, newState.data as Record<string, unknown>)
+              .catch(err => console.error('[db] recordGameResult error:', err))
           }
         }
         break
