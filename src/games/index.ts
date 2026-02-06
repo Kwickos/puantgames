@@ -3,3 +3,4 @@
 import './click-race'
 import './horse-race'
 import './undercover'
+import './codenames'

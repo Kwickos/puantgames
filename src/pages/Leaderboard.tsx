@@ -16,6 +16,7 @@ const TABS = [
   { id: 'click-race', label: 'Click Race' },
   { id: 'horse-race', label: 'Course de Chevaux' },
   { id: 'undercover', label: 'Undercover' },
+  { id: 'codenames', label: 'Codenames' },
 ] as const
 
 export default function Leaderboard() {

@@ -78,6 +78,14 @@ function determineWinners(
         winners.add(player.id)
       }
     }
+  } else if (gameId === 'codenames') {
+    const w = gameData.winner as string | undefined
+    if (!w || w === 'lost') return winners
+
+    for (const player of players) {
+      const team = gameData[`team_${player.id}`] as string | undefined
+      if (team === w) winners.add(player.id)
+    }
   } else {
     let maxScore = -Infinity
     for (const player of players) {
