@@ -1,14 +1,17 @@
 import Database from 'better-sqlite3'
 import { resolve, dirname } from 'path'
 import { fileURLToPath } from 'url'
+import { mkdirSync } from 'fs'
 import type { Player } from '../shared/types.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
-const DB_PATH = resolve(__dirname, 'data', 'puantgames.db')
+const DB_DIR = resolve(__dirname, 'data')
+const DB_PATH = resolve(DB_DIR, 'puantgames.db')
 
 let db: Database.Database
 
 export function initDb(): void {
+  mkdirSync(DB_DIR, { recursive: true })
   db = new Database(DB_PATH)
   db.pragma('journal_mode = WAL')
 
