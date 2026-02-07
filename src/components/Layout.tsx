@@ -135,9 +135,6 @@ export default function Layout() {
                         <p className="text-sm font-medium text-text-primary">
                           {user.globalName ?? user.username}
                         </p>
-                        <p className="text-xs text-text-secondary mt-0.5">
-                          @{user.username}
-                        </p>
                       </div>
                       <div className="p-1.5">
                         <button
