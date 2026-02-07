@@ -40,7 +40,7 @@ export default function Layout() {
       </div>
 
       {/* Header */}
-      <header className="relative z-10 border-b border-border/50 backdrop-blur-md bg-midnight/60">
+      <header className="relative z-20 border-b border-border/50 backdrop-blur-md bg-midnight/60">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center">
           {/* Left: Logo */}
           <Link to="/" className="flex items-center gap-3 group no-underline shrink-0">
