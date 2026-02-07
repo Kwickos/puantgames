@@ -1,5 +1,5 @@
 import { Outlet, Link, useLocation } from 'react-router-dom'
-import { Gamepad2, Home, LogOut, Trophy, Wifi, WifiOff } from 'lucide-react'
+import { Gamepad2, Home, LogOut, Shield, Trophy, Wifi, WifiOff } from 'lucide-react'
 import { motion, AnimatePresence } from 'motion/react'
 import { useRoomStore } from '@/stores/roomStore'
 import { useAuthStore } from '@/stores/authStore'
@@ -82,6 +82,19 @@ export default function Layout() {
                   <Trophy className="w-4 h-4" />
                   Classement
                 </Link>
+                {user?.isAdmin && (
+                  <Link
+                    to="/admin"
+                    className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all no-underline ${
+                      location.pathname === '/admin'
+                        ? 'bg-neon-pink/10 text-neon-pink border border-neon-pink/20'
+                        : 'text-text-secondary hover:text-neon-pink hover:bg-neon-pink/5'
+                    }`}
+                  >
+                    <Shield className="w-4 h-4" />
+                    Admin
+                  </Link>
+                )}
               </>
             )}
           </div>

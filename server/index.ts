@@ -12,8 +12,9 @@ import cookieParser from 'cookie-parser'
 import { RoomManager } from './roomManager.js'
 import { registerGameHandlers } from './gameHandler.js'
 import { authRouter, verifyToken } from './auth.js'
-import { initDb } from './db.js'
+import { initDb, getCustomWords, isUserBanned } from './db.js'
 import { leaderboardRouter } from './leaderboardHandler.js'
+import { createAdminRouter } from './adminHandler.js'
 import type {
   ClientToServerEvents,
   ServerToClientEvents,
@@ -26,6 +27,7 @@ const CLIENT_URL = process.env.CLIENT_URL ?? 'http://localhost:5173'
 const app = express()
 app.use(cors({ origin: CLIENT_URL, credentials: true }))
 app.use(cookieParser())
+app.use(express.json())
 
 // Auth routes
 app.use('/api/auth', authRouter)
@@ -37,6 +39,15 @@ app.use('/api/leaderboard', leaderboardRouter)
 await initDb()
 
 const roomManager = new RoomManager()
+
+// Admin routes
+app.use('/api/admin', createAdminRouter(roomManager))
+
+// Public custom words route (used by games to load custom words)
+app.get('/api/words/:gameId', async (req, res) => {
+  const words = await getCustomWords(req.params.gameId)
+  res.json(words)
+})
 
 app.get('/api/health', (_req, res) => {
   res.json({ ok: true, rooms: roomManager.getRoomCount() })
@@ -53,7 +64,7 @@ const io = new Server<ClientToServerEvents, ServerToClientEvents>(httpServer, {
 })
 
 // Socket.io auth middleware: parse cookie → verify JWT → attach user
-io.use((socket, next) => {
+io.use(async (socket, next) => {
   const cookieHeader = socket.handshake.headers.cookie
   if (!cookieHeader) {
     next(new Error('Authentication required'))
@@ -71,6 +82,13 @@ io.use((socket, next) => {
   const payload = verifyToken(token)
   if (!payload) {
     next(new Error('Invalid token'))
+    return
+  }
+
+  // Check if user is banned
+  const banned = await isUserBanned(payload.discordId)
+  if (banned) {
+    next(new Error('Banned'))
     return
   }
 

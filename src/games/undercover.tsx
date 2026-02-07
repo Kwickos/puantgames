@@ -43,13 +43,29 @@ function UndercoverGame({ players, myPlayerId, gameState, updateGameData, endGam
 
   const [descInput, setDescInput] = useState('')
   const [wordVisible, setWordVisible] = useState(true)
+  const [allPairs, setAllPairs] = useState<[string, string][]>(WORD_PAIRS)
+  const [pairsLoaded, setPairsLoaded] = useState(false)
+
+  // Load custom word pairs
+  useEffect(() => {
+    fetch('/api/words/undercover')
+      .then(r => r.json())
+      .then((custom: { word: string; word2: string | null }[]) => {
+        const customPairs = custom
+          .filter(w => w.word2)
+          .map(w => [w.word, w.word2!] as [string, string])
+        setAllPairs([...WORD_PAIRS, ...customPairs])
+        setPairsLoaded(true)
+      })
+      .catch(() => setPairsLoaded(true))
+  }, [])
 
   // Initialize game (only first player in list)
   useEffect(() => {
-    if (phase || players[0]?.id !== myPlayerId) return
+    if (phase || players[0]?.id !== myPlayerId || !pairsLoaded) return
 
     const ucCount = Math.min((data.undercoverCount as number) ?? 1, Math.floor(players.length / 2))
-    const pair = WORD_PAIRS[Math.floor(Math.random() * WORD_PAIRS.length)]
+    const pair = allPairs[Math.floor(Math.random() * allPairs.length)]
     const [civWord, ucWord] = Math.random() > 0.5 ? pair : [pair[1], pair[0]]
 
     const shuffled = [...players].sort(() => Math.random() - 0.5)
@@ -70,7 +86,7 @@ function UndercoverGame({ players, myPlayerId, gameState, updateGameData, endGam
     })
 
     updateGameData(init)
-  }, [phase, players, myPlayerId, data, updateGameData])
+  }, [phase, players, myPlayerId, data, updateGameData, pairsLoaded, allPairs])
 
   // Derive current turn: count how many alive players have described
   const describedPlayers = alivePlayers.filter(p => data[`desc_${p.id}_${descRound}`])

@@ -84,17 +84,31 @@ function CodenamesGame({ players, myPlayerId, gameState, updateGameData, endGame
   const [clueInput, setClueInput] = useState('')
   const [clueNumInput, setClueNumInput] = useState(1)
   const [spymasterView, setSpymasterView] = useState(true)
+  const [allWords, setAllWords] = useState<string[]>(WORDS)
+  const [wordsLoaded, setWordsLoaded] = useState(false)
+
+  // Load custom words
+  useEffect(() => {
+    fetch('/api/words/codenames')
+      .then(r => r.json())
+      .then((custom: { word: string }[]) => {
+        const customWords = custom.map(w => w.word)
+        setAllWords([...WORDS, ...customWords])
+        setWordsLoaded(true)
+      })
+      .catch(() => setWordsLoaded(true))
+  }, [])
 
   // Initialize game
   useEffect(() => {
-    if (phase || players[0]?.id !== myPlayerId) return
+    if (phase || players[0]?.id !== myPlayerId || !wordsLoaded) return
 
     const settings = gameState.data
     let gameMode = (settings.mode as number) ?? 0
     if (gameMode === 0 && players.length < 4) gameMode = 1
 
     // Pick 25 random words
-    const picked = shuffle(WORDS).slice(0, 25)
+    const picked = shuffle(allWords).slice(0, 25)
 
     // Generate colors
     let cardColors: CardColor[]
@@ -171,7 +185,7 @@ function CodenamesGame({ players, myPlayerId, gameState, updateGameData, endGame
     }
 
     updateGameData(init)
-  }, [phase, players, myPlayerId, gameState.data, updateGameData])
+  }, [phase, players, myPlayerId, gameState.data, updateGameData, wordsLoaded, allWords])
 
   const startGame = () => {
     if (players[0]?.id !== myPlayerId) return

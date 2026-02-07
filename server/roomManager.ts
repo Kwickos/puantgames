@@ -207,6 +207,19 @@ export class RoomManager {
     return this.rooms.size
   }
 
+  getAllRooms(): { code: string; players: { name: string; connected: boolean }[]; gameId: string | null; status: string }[] {
+    const result: { code: string; players: { name: string; connected: boolean }[]; gameId: string | null; status: string }[] = []
+    for (const [code, room] of this.rooms) {
+      result.push({
+        code,
+        players: room.state.players.map(p => ({ name: p.name, connected: p.connected })),
+        gameId: room.state.gameId,
+        status: room.state.gameState.status,
+      })
+    }
+    return result
+  }
+
   cleanupIfAllDisconnected(code: string): boolean {
     const room = this.rooms.get(code)
     if (!room) return false

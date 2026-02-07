@@ -4,6 +4,7 @@ import Layout from '@/components/Layout'
 import Home from '@/pages/Home'
 import Room from '@/pages/Room'
 import Leaderboard from '@/pages/Leaderboard'
+import Admin from '@/pages/Admin'
 import { useSocketLifecycle } from '@/hooks/useSocket'
 import { fetchAuthUser } from '@/stores/authStore'
 
@@ -31,6 +32,7 @@ export default function App() {
           <Route path="/" element={<Home />} />
           <Route path="/room/:code" element={<Room />} />
           <Route path="/leaderboard" element={<Leaderboard />} />
+          <Route path="/admin" element={<Admin />} />
         </Route>
       </Routes>
     </BrowserRouter>

@@ -2,6 +2,7 @@ import { Router } from 'express'
 import jwt from 'jsonwebtoken'
 import type { DiscordUser } from '../shared/types.js'
 
+export const ADMIN_DISCORD_ID = '391902817411006468'
 const COOKIE_NAME = 'puantgames-token'
 const COOKIE_MAX_AGE = 7 * 24 * 60 * 60 * 1000 // 7 days
 
@@ -162,6 +163,7 @@ authRouter.get('/me', (req, res) => {
       avatar: payload.avatar,
       globalName: payload.globalName,
       avatarUrl: discordAvatarUrl(payload),
+      isAdmin: payload.discordId === ADMIN_DISCORD_ID,
     },
   })
 })

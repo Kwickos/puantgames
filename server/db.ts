@@ -22,6 +22,25 @@ export async function initDb(): Promise<void> {
   await pool.query(`CREATE INDEX IF NOT EXISTS idx_game_results_discord_id ON game_results(discord_id)`)
   await pool.query(`CREATE INDEX IF NOT EXISTS idx_game_results_game_id ON game_results(game_id)`)
 
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS custom_words (
+      id SERIAL PRIMARY KEY,
+      game_id TEXT NOT NULL,
+      word TEXT NOT NULL,
+      word2 TEXT,
+      created_at TIMESTAMPTZ DEFAULT NOW()
+    )
+  `)
+
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS banned_users (
+      discord_id TEXT PRIMARY KEY,
+      username TEXT NOT NULL,
+      reason TEXT,
+      banned_at TIMESTAMPTZ DEFAULT NOW()
+    )
+  `)
+
   console.log('[db] PostgreSQL initialized')
 }
 
@@ -139,4 +158,64 @@ export async function getLeaderboard(gameId?: string): Promise<LeaderboardEntry[
     played: row.played,
     winrate: row.played > 0 ? Math.round((row.wins / row.played) * 100) : 0,
   }))
+}
+
+// ─── Custom Words ───
+
+export async function getCustomWords(gameId: string): Promise<{ id: number; word: string; word2: string | null }[]> {
+  const { rows } = await pool.query(
+    'SELECT id, word, word2 FROM custom_words WHERE game_id = $1 ORDER BY id',
+    [gameId]
+  )
+  return rows
+}
+
+export async function addCustomWord(gameId: string, word: string, word2?: string): Promise<number> {
+  const { rows } = await pool.query(
+    'INSERT INTO custom_words (game_id, word, word2) VALUES ($1, $2, $3) RETURNING id',
+    [gameId, word, word2 ?? null]
+  )
+  return rows[0].id
+}
+
+export async function deleteCustomWord(id: number): Promise<void> {
+  await pool.query('DELETE FROM custom_words WHERE id = $1', [id])
+}
+
+// ─── Banned Users ───
+
+export async function getBannedUsers(): Promise<{ discordId: string; username: string; reason: string | null; bannedAt: string }[]> {
+  const { rows } = await pool.query('SELECT discord_id, username, reason, banned_at FROM banned_users ORDER BY banned_at DESC')
+  return rows.map((r: { discord_id: string; username: string; reason: string | null; banned_at: string }) => ({
+    discordId: r.discord_id,
+    username: r.username,
+    reason: r.reason,
+    bannedAt: r.banned_at,
+  }))
+}
+
+export async function banUser(discordId: string, username: string, reason?: string): Promise<void> {
+  await pool.query(
+    'INSERT INTO banned_users (discord_id, username, reason) VALUES ($1, $2, $3) ON CONFLICT (discord_id) DO UPDATE SET username = $2, reason = $3',
+    [discordId, username, reason ?? null]
+  )
+}
+
+export async function unbanUser(discordId: string): Promise<void> {
+  await pool.query('DELETE FROM banned_users WHERE discord_id = $1', [discordId])
+}
+
+export async function isUserBanned(discordId: string): Promise<boolean> {
+  const { rows } = await pool.query('SELECT 1 FROM banned_users WHERE discord_id = $1', [discordId])
+  return rows.length > 0
+}
+
+// ─── Leaderboard management ───
+
+export async function clearLeaderboard(gameId?: string): Promise<void> {
+  if (gameId) {
+    await pool.query('DELETE FROM game_results WHERE game_id = $1', [gameId])
+  } else {
+    await pool.query('DELETE FROM game_results')
+  }
 }

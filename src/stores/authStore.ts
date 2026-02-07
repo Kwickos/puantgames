@@ -6,6 +6,7 @@ interface AuthUser {
   avatar: string | null
   globalName: string | null
   avatarUrl: string
+  isAdmin: boolean
 }
 
 interface AuthStore {
