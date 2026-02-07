@@ -139,14 +139,16 @@ function CodenamesGame({ players, myPlayerId, gameState, updateGameData, endGame
         init[`role_${id}`] = id === spymasterRed ? 'spymaster_red' : 'guesser_red'
       })
     } else {
-      // Simplified: one spymaster, rest are guessers
+      // Simplified / Contre l'ordi: one spymaster, rest are guessers
       const shuffledPlayers = shuffle(players.map(p => p.id))
       const spymaster = shuffledPlayers[0]
 
+      const configuredMaxTurns = gameMode === 2 ? ((settings.maxTurns as number) ?? 9) : 9
+
       init.spymaster = spymaster
       init.teamRemaining = 8
-      init.turnsLeft = 9
-      init.maxTurns = 9
+      init.turnsLeft = configuredMaxTurns
+      init.maxTurns = configuredMaxTurns
 
       players.forEach(p => {
         init[`team_${p.id}`] = 'team'
@@ -420,8 +422,13 @@ function CodenamesGame({ players, myPlayerId, gameState, updateGameData, endGame
     return (
       <div className="space-y-6">
         <h3 className="font-display text-lg tracking-wide text-center">
-          {isClassic ? 'ÉQUIPES' : 'RÔLES'}
+          {isClassic ? 'ÉQUIPES' : mode === 2 ? "CONTRE L'ORDI" : 'RÔLES'}
         </h3>
+        {mode === 2 && (
+          <p className="text-center text-text-muted text-sm -mt-3">
+            Trouvez les 8 mots en {data.maxTurns as number} tours !
+          </p>
+        )}
 
         {isClassic ? (
           <div className="grid grid-cols-2 gap-4">
@@ -717,7 +724,10 @@ function CodenamesGame({ players, myPlayerId, gameState, updateGameData, endGame
             ) : (
               <>
                 <p className="font-display text-2xl text-neon-blue">Victoire ! 🎉</p>
-                <p className="text-text-muted text-sm mt-1">Tous les mots trouvés !</p>
+                <p className="text-text-muted text-sm mt-1">
+                  Tous les mots trouvés
+                  {data.maxTurns ? ` en ${(data.maxTurns as number) - (turnsLeft ?? 0)} tour${((data.maxTurns as number) - (turnsLeft ?? 0)) > 1 ? 's' : ''} !` : ' !'}
+                </p>
               </>
             )}
           </motion.div>
@@ -758,7 +768,7 @@ registry.register({
   emoji: '🔍',
   color: 'neon-blue',
   config: {
-    minPlayers: 4,
+    minPlayers: 2,
     maxPlayers: 8,
   },
   tags: ['social', 'deduction'],
@@ -769,8 +779,21 @@ registry.register({
       options: [
         { label: 'Classique', value: 0 },
         { label: 'Simplifié', value: 1 },
+        { label: "Contre l'ordi", value: 2 },
       ],
       default: 0,
+    },
+    {
+      id: 'maxTurns',
+      label: 'Nombre de tours',
+      options: [
+        { label: '6', value: 6 },
+        { label: '8', value: 8 },
+        { label: '10', value: 10 },
+        { label: '12', value: 12 },
+      ],
+      default: 9,
+      visibleWhen: { settingId: 'mode', value: 2 },
     },
   ],
   component: CodenamesGame,

@@ -7,6 +7,7 @@ export interface GameSetting {
   label: string
   options: { label: string; value: number }[]
   default: number
+  visibleWhen?: { settingId: string; value: number }
 }
 
 export interface GameDefinition {

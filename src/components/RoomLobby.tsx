@@ -122,7 +122,12 @@ export default function RoomLobby() {
         {/* Game settings */}
         {selectedGame?.settings && selectedGame.settings.length > 0 && (
           <div className="mt-4 space-y-3">
-            {selectedGame.settings.map((setting) => (
+            {selectedGame.settings.filter((s) => {
+              if (!s.visibleWhen) return true
+              const depValue = room.settings[s.visibleWhen.settingId] ??
+                selectedGame.settings?.find(d => d.id === s.visibleWhen!.settingId)?.default
+              return depValue === s.visibleWhen.value
+            }).map((setting) => (
               <SettingRow
                 key={setting.id}
                 setting={setting}
