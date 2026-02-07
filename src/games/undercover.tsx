@@ -4,25 +4,6 @@ import { Eye, EyeOff, Send, SkipForward } from 'lucide-react'
 import { registry } from '@/lib/registry'
 import type { GameComponentProps } from '@/types/game'
 
-const WORD_PAIRS: [string, string][] = [
-  ['Chat', 'Chien'], ['Pizza', 'Burger'], ['Coca-Cola', 'Pepsi'],
-  ['Netflix', 'YouTube'], ['Facebook', 'Instagram'], ['Guitare', 'Ukulélé'],
-  ['Dentiste', 'Médecin'], ['Avion', 'Hélicoptère'], ['Bus', 'Tramway'],
-  ['Soleil', 'Lune'], ['Paris', 'Londres'], ['Chocolat', 'Caramel'],
-  ['Football', 'Rugby'], ['Sushi', 'Maki'], ['Piano', 'Orgue'],
-  ['Croissant', 'Pain au chocolat'], ['Café', 'Thé'], ['Pomme', 'Poire'],
-  ['Cinéma', 'Théâtre'], ['Ski', 'Snowboard'], ['Vélo', 'Trottinette'],
-  ['Baleine', 'Dauphin'], ['Aigle', 'Faucon'], ['Chaussette', 'Chaussure'],
-  ['Couteau', 'Ciseaux'], ['Écharpe', 'Foulard'], ['Bougie', 'Lampe'],
-  ['Rivière', 'Fleuve'], ['Montagne', 'Colline'], ['Crêpe', 'Gaufre'],
-  ['Fraise', 'Framboise'], ['Batman', 'Superman'], ['Mario', 'Sonic'],
-  ['Camping', 'Glamping'], ['Piscine', 'Plage'], ['Beurre', 'Margarine'],
-  ['Tigre', 'Lion'], ['Violon', 'Violoncelle'], ['Glace', 'Sorbet'],
-  ['Canapé', 'Fauteuil'],
-  ['Karmine Corp', 'Solary'], ['G2', 'Fnatic'], ['Vitality', 'MAD KOI'],
-  ['Team Heretics', 'SK Gaming'], ['NAVI', 'GX'], ['Shifters', 'Los Ratones'],
-]
-
 type Phase = 'describing' | 'voting' | 'result' | 'gameover'
 
 function UndercoverGame({ players, myPlayerId, gameState, updateGameData, endGame }: GameComponentProps) {
@@ -43,18 +24,18 @@ function UndercoverGame({ players, myPlayerId, gameState, updateGameData, endGam
 
   const [descInput, setDescInput] = useState('')
   const [wordVisible, setWordVisible] = useState(true)
-  const [allPairs, setAllPairs] = useState<[string, string][]>(WORD_PAIRS)
+  const [allPairs, setAllPairs] = useState<[string, string][]>([])
   const [pairsLoaded, setPairsLoaded] = useState(false)
 
-  // Load custom word pairs
+  // Load word pairs from database
   useEffect(() => {
     fetch('/api/words/undercover')
       .then(r => r.json())
-      .then((custom: { word: string; word2: string | null }[]) => {
-        const customPairs = custom
+      .then((words: { word: string; word2: string | null }[]) => {
+        const pairs = words
           .filter(w => w.word2)
           .map(w => [w.word, w.word2!] as [string, string])
-        setAllPairs([...WORD_PAIRS, ...customPairs])
+        setAllPairs(pairs)
         setPairsLoaded(true)
       })
       .catch(() => setPairsLoaded(true))

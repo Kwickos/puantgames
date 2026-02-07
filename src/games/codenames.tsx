@@ -4,35 +4,6 @@ import { Send, SkipForward, Skull, Eye, EyeOff } from 'lucide-react'
 import { registry } from '@/lib/registry'
 import type { GameComponentProps } from '@/types/game'
 
-const WORDS = [
-  'Avion', 'Arbre', 'Banane', 'Ballon', 'Bougie', 'Camion', 'Chapeau', 'Chat',
-  'Château', 'Cheval', 'Ciseaux', 'Clé', 'Cochon', 'Couteau', 'Crayon', 'Diamant',
-  'Dragon', 'Éléphant', 'Étoile', 'Fantôme', 'Fleur', 'Forêt', 'Fromage', 'Fusée',
-  'Gâteau', 'Girafe', 'Glace', 'Guitare', 'Hamster', 'Île', 'Jardin', 'Kangourou',
-  'Lapin', 'Lion', 'Loup', 'Lunettes', 'Maison', 'Marteau', 'Miroir', 'Montagne',
-  'Mouton', 'Neige', 'Nuage', 'Orange', 'Ours', 'Pain', 'Papillon', 'Parapluie',
-  'Perroquet', 'Piano', 'Pierre', 'Pirate', 'Plage', 'Plume', 'Poisson', 'Pomme',
-  'Pont', 'Prince', 'Princesse', 'Robot', 'Roi', 'Rose', 'Sable', 'Serpent',
-  'Sirène', 'Soleil', 'Souris', 'Tigre', 'Tortue', 'Tour', 'Train', 'Trésor',
-  'Vampire', 'Voiture', 'Volcan', 'Zèbre', 'Ancre', 'Bague', 'Bombe', 'Café',
-  'Carotte', 'Cerise', 'Cinéma', 'Cirque', 'Clown', 'Coeur', 'Crabe', 'Drapeau',
-  'Échelle', 'Éclair', 'Épée', 'Escargot', 'Feu', 'Feuille', 'Flamme', 'Globe',
-  'Hélicoptère', 'Hibou', 'Horloge', 'Iceberg', 'Jumelles', 'Jungle', 'Lampe',
-  'Licorne', 'Lune', 'Méduse', 'Monstre', 'Ninja', 'Oiseau', 'Panda', 'Parachute',
-  'Phare', 'Pingouin', 'Pizza', 'Radar', 'Renard', 'Requin', 'Rivière', 'Sabre',
-  'Satellite', 'Sorcier', 'Squelette', 'Tambour', 'Tonnerre', 'Trompette', 'Tulipe',
-  'Tunnel', 'Vélo', 'Vague', 'Astronaute', 'Baleine', 'Bouclier', 'Brouillard',
-  'Cascade', 'Cathédrale', 'Cheminée', 'Chocolat', 'Cigogne', 'Coffre', 'Colombe',
-  'Comète', 'Continent', 'Couronne', 'Cygne', 'Désert', 'Dinosaure', 'Domino',
-  'Fontaine', 'Fossile', 'Galaxie', 'Grotte', 'Harmonica', 'Horizon', 'Igloo',
-  'Inventeur', 'Joyau', 'Kayak', 'Lanterne', 'Légende', 'Magicien', 'Mammouth',
-  'Masque', 'Météore', 'Microscope', 'Momie', 'Moustache', 'Mystère', 'Neptune',
-  'Oasis', 'Océan', 'Orchidée', 'Palais', 'Palmier', 'Panthère', 'Paradis',
-  'Pélican', 'Pendule', 'Pharaon', 'Phénix', 'Planète', 'Prairie', 'Pyramide',
-  'Reine', 'Safari', 'Scarabée', 'Sphinx', 'Statue', 'Temple', 'Tornade',
-  'Trophée', 'Viking', 'Volcan',
-]
-
 type Phase = 'setup' | 'clue' | 'guessing' | 'gameover'
 type CardColor = 'blue' | 'red' | 'neutral' | 'assassin' | 'team'
 
@@ -84,16 +55,15 @@ function CodenamesGame({ players, myPlayerId, gameState, updateGameData, endGame
   const [clueInput, setClueInput] = useState('')
   const [clueNumInput, setClueNumInput] = useState(1)
   const [spymasterView, setSpymasterView] = useState(true)
-  const [allWords, setAllWords] = useState<string[]>(WORDS)
+  const [allWords, setAllWords] = useState<string[]>([])
   const [wordsLoaded, setWordsLoaded] = useState(false)
 
-  // Load custom words
+  // Load words from database
   useEffect(() => {
     fetch('/api/words/codenames')
       .then(r => r.json())
-      .then((custom: { word: string }[]) => {
-        const customWords = custom.map(w => w.word)
-        setAllWords([...WORDS, ...customWords])
+      .then((words: { word: string }[]) => {
+        setAllWords(words.map(w => w.word))
         setWordsLoaded(true)
       })
       .catch(() => setWordsLoaded(true))

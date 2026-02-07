@@ -41,7 +41,96 @@ export async function initDb(): Promise<void> {
     )
   `)
 
+  await seedDefaultWords()
+
   console.log('[db] PostgreSQL initialized')
+}
+
+// ─── Default words seed ───
+
+const DEFAULT_CODENAMES_WORDS = [
+  'Avion', 'Arbre', 'Banane', 'Ballon', 'Bougie', 'Camion', 'Chapeau', 'Chat',
+  'Château', 'Cheval', 'Ciseaux', 'Clé', 'Cochon', 'Couteau', 'Crayon', 'Diamant',
+  'Dragon', 'Éléphant', 'Étoile', 'Fantôme', 'Fleur', 'Forêt', 'Fromage', 'Fusée',
+  'Gâteau', 'Girafe', 'Glace', 'Guitare', 'Hamster', 'Île', 'Jardin', 'Kangourou',
+  'Lapin', 'Lion', 'Loup', 'Lunettes', 'Maison', 'Marteau', 'Miroir', 'Montagne',
+  'Mouton', 'Neige', 'Nuage', 'Orange', 'Ours', 'Pain', 'Papillon', 'Parapluie',
+  'Perroquet', 'Piano', 'Pierre', 'Pirate', 'Plage', 'Plume', 'Poisson', 'Pomme',
+  'Pont', 'Prince', 'Princesse', 'Robot', 'Roi', 'Rose', 'Sable', 'Serpent',
+  'Sirène', 'Soleil', 'Souris', 'Tigre', 'Tortue', 'Tour', 'Train', 'Trésor',
+  'Vampire', 'Voiture', 'Volcan', 'Zèbre', 'Ancre', 'Bague', 'Bombe', 'Café',
+  'Carotte', 'Cerise', 'Cinéma', 'Cirque', 'Clown', 'Coeur', 'Crabe', 'Drapeau',
+  'Échelle', 'Éclair', 'Épée', 'Escargot', 'Feu', 'Feuille', 'Flamme', 'Globe',
+  'Hélicoptère', 'Hibou', 'Horloge', 'Iceberg', 'Jumelles', 'Jungle', 'Lampe',
+  'Licorne', 'Lune', 'Méduse', 'Monstre', 'Ninja', 'Oiseau', 'Panda', 'Parachute',
+  'Phare', 'Pingouin', 'Pizza', 'Radar', 'Renard', 'Requin', 'Rivière', 'Sabre',
+  'Satellite', 'Sorcier', 'Squelette', 'Tambour', 'Tonnerre', 'Trompette', 'Tulipe',
+  'Tunnel', 'Vélo', 'Vague', 'Astronaute', 'Baleine', 'Bouclier', 'Brouillard',
+  'Cascade', 'Cathédrale', 'Cheminée', 'Chocolat', 'Cigogne', 'Coffre', 'Colombe',
+  'Comète', 'Continent', 'Couronne', 'Cygne', 'Désert', 'Dinosaure', 'Domino',
+  'Fontaine', 'Fossile', 'Galaxie', 'Grotte', 'Harmonica', 'Horizon', 'Igloo',
+  'Inventeur', 'Joyau', 'Kayak', 'Lanterne', 'Légende', 'Magicien', 'Mammouth',
+  'Masque', 'Météore', 'Microscope', 'Momie', 'Moustache', 'Mystère', 'Neptune',
+  'Oasis', 'Océan', 'Orchidée', 'Palais', 'Palmier', 'Panthère', 'Paradis',
+  'Pélican', 'Pendule', 'Pharaon', 'Phénix', 'Planète', 'Prairie', 'Pyramide',
+  'Reine', 'Safari', 'Scarabée', 'Sphinx', 'Statue', 'Temple', 'Tornade',
+  'Trophée', 'Viking', 'Volcan',
+]
+
+const DEFAULT_UNDERCOVER_PAIRS: [string, string][] = [
+  ['Chat', 'Chien'], ['Pizza', 'Burger'], ['Coca-Cola', 'Pepsi'],
+  ['Netflix', 'YouTube'], ['Facebook', 'Instagram'], ['Guitare', 'Ukulélé'],
+  ['Dentiste', 'Médecin'], ['Avion', 'Hélicoptère'], ['Bus', 'Tramway'],
+  ['Soleil', 'Lune'], ['Paris', 'Londres'], ['Chocolat', 'Caramel'],
+  ['Football', 'Rugby'], ['Sushi', 'Maki'], ['Piano', 'Orgue'],
+  ['Croissant', 'Pain au chocolat'], ['Café', 'Thé'], ['Pomme', 'Poire'],
+  ['Cinéma', 'Théâtre'], ['Ski', 'Snowboard'], ['Vélo', 'Trottinette'],
+  ['Baleine', 'Dauphin'], ['Aigle', 'Faucon'], ['Chaussette', 'Chaussure'],
+  ['Couteau', 'Ciseaux'], ['Écharpe', 'Foulard'], ['Bougie', 'Lampe'],
+  ['Rivière', 'Fleuve'], ['Montagne', 'Colline'], ['Crêpe', 'Gaufre'],
+  ['Fraise', 'Framboise'], ['Batman', 'Superman'], ['Mario', 'Sonic'],
+  ['Camping', 'Glamping'], ['Piscine', 'Plage'], ['Beurre', 'Margarine'],
+  ['Tigre', 'Lion'], ['Violon', 'Violoncelle'], ['Glace', 'Sorbet'],
+  ['Canapé', 'Fauteuil'],
+  ['Karmine Corp', 'Solary'], ['G2', 'Fnatic'], ['Vitality', 'MAD KOI'],
+  ['Team Heretics', 'SK Gaming'], ['NAVI', 'GX'], ['Shifters', 'Los Ratones'],
+]
+
+async function seedDefaultWords(): Promise<void> {
+  const { rows } = await pool.query('SELECT COUNT(*)::int as count FROM custom_words')
+  if (rows[0].count > 0) return
+
+  console.log('[db] Seeding default words...')
+
+  // Seed codenames words
+  const cnValues: unknown[] = []
+  const cnPlaceholders: string[] = []
+  let idx = 1
+  for (const word of DEFAULT_CODENAMES_WORDS) {
+    cnPlaceholders.push(`($${idx}, $${idx + 1})`)
+    cnValues.push('codenames', word)
+    idx += 2
+  }
+  await pool.query(
+    `INSERT INTO custom_words (game_id, word) VALUES ${cnPlaceholders.join(', ')}`,
+    cnValues
+  )
+
+  // Seed undercover pairs
+  const ucValues: unknown[] = []
+  const ucPlaceholders: string[] = []
+  idx = 1
+  for (const [w1, w2] of DEFAULT_UNDERCOVER_PAIRS) {
+    ucPlaceholders.push(`($${idx}, $${idx + 1}, $${idx + 2})`)
+    ucValues.push('undercover', w1, w2)
+    idx += 3
+  }
+  await pool.query(
+    `INSERT INTO custom_words (game_id, word, word2) VALUES ${ucPlaceholders.join(', ')}`,
+    ucValues
+  )
+
+  console.log(`[db] Seeded ${DEFAULT_CODENAMES_WORDS.length} codenames words + ${DEFAULT_UNDERCOVER_PAIRS.length} undercover pairs`)
 }
 
 export async function recordGameResult(
