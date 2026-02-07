@@ -1,17 +1,17 @@
 import { motion } from 'motion/react'
-import { Users } from 'lucide-react'
+import { Users, Check } from 'lucide-react'
 import type { GameDefinition } from '@/types/game'
 
-const colorMap: Record<string, { bg: string; text: string; border: string; hoverBorder: string }> = {
-  'neon-green': { bg: 'bg-neon-green/10', text: 'text-neon-green', border: 'border-neon-green/20', hoverBorder: 'group-hover:border-neon-green/40' },
-  'neon-pink': { bg: 'bg-neon-pink/10', text: 'text-neon-pink', border: 'border-neon-pink/20', hoverBorder: 'group-hover:border-neon-pink/40' },
-  'neon-blue': { bg: 'bg-neon-blue/10', text: 'text-neon-blue', border: 'border-neon-blue/20', hoverBorder: 'group-hover:border-neon-blue/40' },
-  'neon-yellow': { bg: 'bg-neon-yellow/10', text: 'text-neon-yellow', border: 'border-neon-yellow/20', hoverBorder: 'group-hover:border-neon-yellow/40' },
-  'neon-purple': { bg: 'bg-neon-purple/10', text: 'text-neon-purple', border: 'border-neon-purple/20', hoverBorder: 'group-hover:border-neon-purple/40' },
-  'neon-orange': { bg: 'bg-neon-orange/10', text: 'text-neon-orange', border: 'border-neon-orange/20', hoverBorder: 'group-hover:border-neon-orange/40' },
+const colorMap: Record<string, { bg: string; text: string; border: string }> = {
+  'neon-green': { bg: 'bg-neon-green/10', text: 'text-neon-green', border: 'border-neon-green/30' },
+  'neon-pink': { bg: 'bg-neon-pink/10', text: 'text-neon-pink', border: 'border-neon-pink/30' },
+  'neon-blue': { bg: 'bg-neon-blue/10', text: 'text-neon-blue', border: 'border-neon-blue/30' },
+  'neon-yellow': { bg: 'bg-neon-yellow/10', text: 'text-neon-yellow', border: 'border-neon-yellow/30' },
+  'neon-purple': { bg: 'bg-neon-purple/10', text: 'text-neon-purple', border: 'border-neon-purple/30' },
+  'neon-orange': { bg: 'bg-neon-orange/10', text: 'text-neon-orange', border: 'border-neon-orange/30' },
 }
 
-export default function GameCard({ game, index }: { game: GameDefinition; index: number }) {
+export default function GameCard({ game, index, selected }: { game: GameDefinition; index: number; selected?: boolean }) {
   const colors = colorMap[game.color] ?? colorMap['neon-green']
 
   return (
@@ -20,36 +20,50 @@ export default function GameCard({ game, index }: { game: GameDefinition; index:
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.08, duration: 0.4, ease: 'easeOut' }}
     >
-      <div className="gradient-border group transition-colors duration-200 hover:border-border-light">
-        <div className="p-6">
-          <div className={`w-14 h-14 rounded-2xl ${colors.bg} border ${colors.border} ${colors.hoverBorder} flex items-center justify-center text-2xl mb-4 transition-colors`}>
-            {game.emoji}
+      <div className={`gradient-border group transition-colors duration-200 ${
+        selected
+          ? `!border-2 ${colors.border}`
+          : 'hover:border-border-light'
+      }`}>
+        <div className="p-5">
+          <div className="flex items-start gap-3.5">
+            <div className={`w-11 h-11 rounded-xl ${colors.bg} border ${colors.border} flex items-center justify-center text-xl shrink-0`}>
+              {game.emoji}
+            </div>
+
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2">
+                <h3 className="font-display text-sm text-text-primary tracking-wide truncate">
+                  {game.name}
+                </h3>
+                {selected && (
+                  <div className={`w-5 h-5 rounded-full ${colors.bg} border ${colors.border} flex items-center justify-center shrink-0`}>
+                    <Check className={`w-3 h-3 ${colors.text}`} />
+                  </div>
+                )}
+              </div>
+              <p className="text-text-secondary text-xs leading-relaxed mt-0.5 line-clamp-2">
+                {game.description}
+              </p>
+            </div>
           </div>
 
-          <h3 className="font-display text-lg text-text-primary mb-1 tracking-wide">
-            {game.name}
-          </h3>
-
-          <p className="text-text-secondary text-sm leading-relaxed mb-4">
-            {game.description}
-          </p>
-
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-1.5 text-text-muted text-xs">
-              <Users className="w-3.5 h-3.5" />
+          <div className="flex items-center justify-between mt-3.5 pt-3 border-t border-border/30">
+            <div className="flex items-center gap-1.5 text-text-muted text-[11px]">
+              <Users className="w-3 h-3" />
               <span>{game.config.minPlayers}-{game.config.maxPlayers} joueurs</span>
             </div>
-          </div>
 
-          {game.tags.length > 0 && (
-            <div className="flex flex-wrap gap-1.5 mt-4 pt-4 border-t border-border/30">
-              {game.tags.map(tag => (
-                <span key={tag} className="text-[10px] uppercase tracking-wider text-text-muted bg-surface-light px-2 py-0.5 rounded-md">
-                  {tag}
-                </span>
-              ))}
-            </div>
-          )}
+            {game.tags.length > 0 && (
+              <div className="flex gap-1.5">
+                {game.tags.map(tag => (
+                  <span key={tag} className="text-[10px] uppercase tracking-wider text-text-muted bg-surface-light px-2 py-0.5 rounded-md">
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </motion.div>
