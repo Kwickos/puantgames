@@ -128,20 +128,21 @@ export default function Layout() {
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: 4, scale: 0.97 }}
                       transition={{ duration: 0.12 }}
-                      className="absolute right-0 top-full mt-2 w-56 bg-surface border border-border rounded-xl shadow-xl shadow-black/40 overflow-hidden z-50"
+                      className="absolute right-0 top-full mt-2 w-52 rounded-xl border border-border bg-midnight shadow-2xl shadow-black/60"
+                      style={{ zIndex: 9999 }}
                     >
                       <div className="px-4 py-3 border-b border-border/50">
-                        <p className="text-sm font-medium text-text-primary truncate">
+                        <p className="text-sm font-medium text-text-primary">
                           {user.globalName ?? user.username}
                         </p>
-                        <p className="text-xs text-text-muted truncate">
+                        <p className="text-xs text-text-secondary mt-0.5">
                           @{user.username}
                         </p>
                       </div>
                       <div className="p-1.5">
                         <button
                           onClick={logout}
-                          className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-text-secondary hover:text-neon-pink hover:bg-neon-pink/5 transition-colors"
+                          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-text-secondary hover:text-neon-pink hover:bg-neon-pink/5 transition-colors"
                         >
                           <LogOut className="w-4 h-4" />
                           Deconnexion
