@@ -159,9 +159,19 @@ function WordsTab() {
         ))}
       </div>
 
+      {/* Default words info */}
+      <div className="bg-surface-light/50 border border-border/20 rounded-xl px-4 py-3 flex items-center justify-between">
+        <p className="text-sm text-text-secondary">
+          Mots par défaut (hardcodés)
+        </p>
+        <span className="font-display text-sm text-neon-blue">
+          {gameId === 'codenames' ? '175 mots' : '40 paires'}
+        </span>
+      </div>
+
       {/* Add form */}
       <div className="space-y-2">
-        <p className="text-text-muted text-xs uppercase tracking-wider font-medium">Ajouter un mot</p>
+        <p className="text-text-muted text-xs uppercase tracking-wider font-medium">Ajouter un mot custom</p>
         <div className="flex gap-2">
           <input
             type="text"
@@ -201,7 +211,7 @@ function WordsTab() {
             <div className="w-6 h-6 border-2 border-neon-pink border-t-transparent rounded-full animate-spin mx-auto" />
           </div>
         ) : words.length === 0 ? (
-          <p className="text-text-muted text-sm py-4 text-center">Aucun mot custom pour ce jeu.</p>
+          <p className="text-text-muted text-sm py-4 text-center">Aucun mot custom ajouté. Les mots par défaut sont toujours utilisés.</p>
         ) : (
           words.map(w => (
             <div key={w.id} className="flex items-center gap-3 bg-surface-light/50 border border-border/20 rounded-xl px-4 py-2.5">
