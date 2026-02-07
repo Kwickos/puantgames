@@ -2,13 +2,13 @@ import { motion } from 'motion/react'
 import { Users } from 'lucide-react'
 import type { GameDefinition } from '@/types/game'
 
-const colorMap: Record<string, { bg: string; text: string; border: string }> = {
-  'neon-green': { bg: 'bg-neon-green/10', text: 'text-neon-green', border: 'border-neon-green/20' },
-  'neon-pink': { bg: 'bg-neon-pink/10', text: 'text-neon-pink', border: 'border-neon-pink/20' },
-  'neon-blue': { bg: 'bg-neon-blue/10', text: 'text-neon-blue', border: 'border-neon-blue/20' },
-  'neon-yellow': { bg: 'bg-neon-yellow/10', text: 'text-neon-yellow', border: 'border-neon-yellow/20' },
-  'neon-purple': { bg: 'bg-neon-purple/10', text: 'text-neon-purple', border: 'border-neon-purple/20' },
-  'neon-orange': { bg: 'bg-neon-orange/10', text: 'text-neon-orange', border: 'border-neon-orange/20' },
+const colorMap: Record<string, { bg: string; text: string; border: string; hoverBorder: string }> = {
+  'neon-green': { bg: 'bg-neon-green/10', text: 'text-neon-green', border: 'border-neon-green/20', hoverBorder: 'group-hover:border-neon-green/40' },
+  'neon-pink': { bg: 'bg-neon-pink/10', text: 'text-neon-pink', border: 'border-neon-pink/20', hoverBorder: 'group-hover:border-neon-pink/40' },
+  'neon-blue': { bg: 'bg-neon-blue/10', text: 'text-neon-blue', border: 'border-neon-blue/20', hoverBorder: 'group-hover:border-neon-blue/40' },
+  'neon-yellow': { bg: 'bg-neon-yellow/10', text: 'text-neon-yellow', border: 'border-neon-yellow/20', hoverBorder: 'group-hover:border-neon-yellow/40' },
+  'neon-purple': { bg: 'bg-neon-purple/10', text: 'text-neon-purple', border: 'border-neon-purple/20', hoverBorder: 'group-hover:border-neon-purple/40' },
+  'neon-orange': { bg: 'bg-neon-orange/10', text: 'text-neon-orange', border: 'border-neon-orange/20', hoverBorder: 'group-hover:border-neon-orange/40' },
 }
 
 export default function GameCard({ game, index }: { game: GameDefinition; index: number }) {
@@ -20,9 +20,9 @@ export default function GameCard({ game, index }: { game: GameDefinition; index:
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.08, duration: 0.4, ease: 'easeOut' }}
     >
-      <div className="gradient-border group transition-all duration-300 hover:scale-[1.02] hover:border-border-light">
+      <div className="gradient-border group transition-colors duration-200 hover:border-border-light">
         <div className="p-6">
-          <div className={`w-14 h-14 rounded-2xl ${colors.bg} border ${colors.border} flex items-center justify-center text-2xl mb-4 transition-transform group-hover:scale-110 group-hover:rotate-3`}>
+          <div className={`w-14 h-14 rounded-2xl ${colors.bg} border ${colors.border} ${colors.hoverBorder} flex items-center justify-center text-2xl mb-4 transition-colors`}>
             {game.emoji}
           </div>
 

@@ -125,7 +125,7 @@ export default function Home() {
         <button
           onClick={handleCreate}
           disabled={!connected || loading}
-          className="w-full gradient-border group transition-all hover:scale-[1.01] disabled:opacity-50"
+          className="w-full gradient-border group transition-colors hover:border-border-light disabled:opacity-50"
         >
           <div className="p-6 flex items-center gap-4">
             <div className="w-12 h-12 rounded-xl bg-neon-green/10 border border-neon-green/20 flex items-center justify-center group-hover:bg-neon-green/20 transition-colors">

@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'motion/react'
-import { Crown, X, Wifi, WifiOff } from 'lucide-react'
+import { Crown, X } from 'lucide-react'
 import { useRoomStore } from '@/stores/roomStore'
 import { useRoom } from '@/hooks/useRoom'
 import { registry } from '@/lib/registry'
@@ -70,11 +70,6 @@ export default function RoomLobby() {
                   Host
                 </span>
               )}
-              {player.connected ? (
-                <Wifi className="w-3.5 h-3.5 text-neon-green" />
-              ) : (
-                <WifiOff className="w-3.5 h-3.5 text-text-muted" />
-              )}
               {isHost && player.id !== room.hostId && (
                 <button
                   onClick={() => kickPlayer(player.id)}
@@ -102,7 +97,7 @@ export default function RoomLobby() {
                 onClick={() => selectGame(game.id)}
                 className={`cursor-pointer rounded-2xl transition-all ${
                   room.gameId === game.id
-                    ? 'ring-2 ring-neon-green ring-offset-2 ring-offset-midnight'
+                    ? 'outline-2 outline-neon-green outline-offset-2'
                     : ''
                 }`}
               >
