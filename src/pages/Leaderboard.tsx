@@ -17,6 +17,7 @@ const TABS = [
   { id: 'horse-race', label: 'Course de Chevaux' },
   { id: 'undercover', label: 'Undercover' },
   { id: 'codenames', label: 'Codenames' },
+  { id: 'aim-trainer', label: 'Aim Trainer' },
 ] as const
 
 export default function Leaderboard() {
