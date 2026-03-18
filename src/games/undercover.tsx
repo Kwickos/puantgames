@@ -151,7 +151,7 @@ function UndercoverGame({ players, myPlayerId, gameState, updateGameData, endGam
   if (!phase) {
     return (
       <div className="text-center py-8">
-        <div className="w-8 h-8 border-2 border-neon-purple border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+        <div className="w-8 h-8 border-2 border-accent-purple border-t-transparent rounded-full animate-spin mx-auto mb-4" />
         <p className="text-text-muted">Préparation de la partie...</p>
       </div>
     )
@@ -164,13 +164,13 @@ function UndercoverGame({ players, myPlayerId, gameState, updateGameData, endGam
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-neon-purple/5 border border-neon-purple/20 rounded-xl p-4 flex items-center justify-between"
+          className="bg-accent-purple/5 border border-accent-purple/20 rounded-xl p-4 flex items-center justify-between"
         >
           <div>
             <p className="text-xs text-text-muted mb-1">
               {isAlive ? 'Ton mot secret' : 'Tu es éliminé — ton mot était'}
             </p>
-            <p className={`font-display text-xl tracking-wide ${wordVisible ? 'text-neon-purple' : 'blur-md text-neon-purple select-none'}`}>
+            <p className={`font-display text-xl tracking-wide ${wordVisible ? 'text-accent-purple' : 'blur-md text-accent-purple select-none'}`}>
               {myWord}
             </p>
           </div>
@@ -191,7 +191,7 @@ function UndercoverGame({ players, myPlayerId, gameState, updateGameData, endGam
           </h3>
 
           {phase === 'voting' && isAlive && !myVote && (
-            <p className="text-center text-neon-pink text-sm animate-pulse">
+            <p className="text-center text-accent-pink text-sm animate-pulse">
               Clique sur un joueur suspect pour voter
             </p>
           )}
@@ -225,18 +225,18 @@ function UndercoverGame({ players, myPlayerId, gameState, updateGameData, endGam
                     onClick={() => canVote && submitVote(p.id)}
                     className={`rounded-xl border p-3 flex flex-col items-center gap-2 transition-all ${
                       wasVotedByMe
-                        ? 'bg-neon-pink/10 border-neon-pink/40 ring-2 ring-neon-pink/20'
+                        ? 'bg-accent-pink/10 border-accent-pink/40 ring-2 ring-accent-pink/20'
                         : isCurrentTurn
-                          ? 'bg-neon-purple/10 border-neon-purple/40'
+                          ? 'bg-accent-purple/10 border-accent-purple/40'
                           : canVote
-                            ? 'bg-surface-light border-border/30 hover:border-neon-pink/40 hover:bg-neon-pink/5 cursor-pointer'
-                            : 'bg-surface-light border-border/30'
+                            ? 'bg-elevated border-border/30 hover:border-accent-pink/40 hover:bg-accent-pink/5 cursor-pointer'
+                            : 'bg-elevated border-border/30'
                     }`}
                   >
                     {/* Player header */}
                     <img src={p.avatar} alt="" className="w-8 h-8 rounded-full" />
                     <p className={`text-xs font-medium truncate max-w-full ${
-                      isMe ? 'text-neon-purple' : 'text-text-secondary'
+                      isMe ? 'text-accent-purple' : 'text-text-secondary'
                     }`}>
                       {isMe ? 'Toi' : p.name}
                     </p>
@@ -246,7 +246,7 @@ function UndercoverGame({ players, myPlayerId, gameState, updateGameData, endGam
                       {descriptions.map(d => (
                         <div
                           key={d.round}
-                          className="bg-surface/60 rounded-lg px-2 py-1.5"
+                          className="bg-card/60 rounded-lg px-2 py-1.5"
                         >
                           <p className="text-xs text-text-primary text-center break-words">
                             {d.text}
@@ -258,16 +258,16 @@ function UndercoverGame({ players, myPlayerId, gameState, updateGameData, endGam
                     {/* Status indicator */}
                     {phase === 'describing' && (
                       isCurrentTurn ? (
-                        <div className="w-4 h-4 border-2 border-neon-purple border-t-transparent rounded-full animate-spin" />
+                        <div className="w-4 h-4 border-2 border-accent-purple border-t-transparent rounded-full animate-spin" />
                       ) : hasDescribed ? (
-                        <span className="text-[10px] text-neon-purple">✓</span>
+                        <span className="text-[10px] text-accent-purple">✓</span>
                       ) : (
                         <span className="text-[10px] text-text-muted">en attente</span>
                       )
                     )}
                     {phase === 'voting' && (
                       hasVoted ? (
-                        <span className="text-[10px] text-neon-pink">✓ a voté</span>
+                        <span className="text-[10px] text-accent-pink">✓ a voté</span>
                       ) : (
                         <span className="text-[10px] text-text-muted">...</span>
                       )
@@ -285,7 +285,7 @@ function UndercoverGame({ players, myPlayerId, gameState, updateGameData, endGam
               animate={{ opacity: 1, y: 0 }}
               className="space-y-2"
             >
-              <p className="text-neon-purple text-sm font-medium text-center">C'est ton tour !</p>
+              <p className="text-accent-purple text-sm font-medium text-center">C'est ton tour !</p>
               <div className="flex gap-2">
                 <input
                   type="text"
@@ -295,12 +295,12 @@ function UndercoverGame({ players, myPlayerId, gameState, updateGameData, endGam
                   placeholder="Un indice en quelques mots..."
                   maxLength={60}
                   autoFocus
-                  className="flex-1 bg-surface-light border border-neon-purple/30 rounded-xl px-4 py-3 text-text-primary placeholder:text-text-muted focus:outline-none focus:border-neon-purple/50 transition-colors"
+                  className="flex-1 bg-elevated border border-accent-purple/30 rounded-xl px-4 py-3 text-text-primary placeholder:text-text-muted focus:outline-none focus:border-accent-purple/50 transition-colors"
                 />
                 <button
                   onClick={submitDescription}
                   disabled={!descInput.trim()}
-                  className="bg-neon-purple/10 border border-neon-purple/20 text-neon-purple rounded-xl px-4 py-3 hover:bg-neon-purple/20 transition-colors disabled:opacity-30"
+                  className="bg-accent-purple/10 border border-accent-purple/20 text-accent-purple rounded-xl px-4 py-3 hover:bg-accent-purple/20 transition-colors disabled:opacity-30"
                 >
                   <Send className="w-5 h-5" />
                 </button>
@@ -315,7 +315,7 @@ function UndercoverGame({ players, myPlayerId, gameState, updateGameData, endGam
           )}
 
           {phase === 'voting' && isAlive && myVote && (
-            <p className="text-center text-neon-purple text-sm">
+            <p className="text-center text-accent-purple text-sm">
               A voté ! En attente des autres...
             </p>
           )}
@@ -350,14 +350,14 @@ function UndercoverGame({ players, myPlayerId, gameState, updateGameData, endGam
                   key={p.id}
                   className={`flex items-center gap-3 rounded-xl p-3 ${
                     p.id === lastEliminated
-                      ? 'bg-neon-pink/10 border border-neon-pink/30'
-                      : 'bg-surface-light border border-border/30'
+                      ? 'bg-accent-pink/10 border border-accent-pink/30'
+                      : 'bg-elevated border border-border/30'
                   }`}
                 >
                   <img src={p.avatar} alt="" className="w-7 h-7 rounded-full" />
                   <span className="text-sm font-medium flex-1">{p.id === myPlayerId ? 'Toi' : p.name}</span>
                   <span className={`text-sm font-display ${
-                    p.id === lastEliminated ? 'text-neon-pink' : 'text-text-muted'
+                    p.id === lastEliminated ? 'text-accent-pink' : 'text-text-muted'
                   }`}>
                     {votesReceived} vote{votesReceived !== 1 ? 's' : ''}
                   </span>
@@ -373,7 +373,7 @@ function UndercoverGame({ players, myPlayerId, gameState, updateGameData, endGam
               animate={{ opacity: 1, scale: 1 }}
               className="text-center py-3"
             >
-              <p className="font-display text-xl text-neon-yellow">Égalité !</p>
+              <p className="font-display text-xl text-accent-orange">Égalité !</p>
               <p className="text-text-muted text-sm mt-1">Personne n'est éliminé ce tour.</p>
             </motion.div>
           ) : lastEliminated ? (
@@ -391,7 +391,7 @@ function UndercoverGame({ players, myPlayerId, gameState, updateGameData, endGam
                       <img src={elim?.avatar} alt="" className="w-7 h-7 rounded-full inline align-middle" /> <span className="font-display text-xl">{elim?.name}</span> est éliminé !
                     </p>
                     <p className={`font-display text-lg mt-2 ${
-                      role === 'undercover' ? 'text-neon-pink' : 'text-neon-blue'
+                      role === 'undercover' ? 'text-accent-pink' : 'text-accent-blue'
                     }`}>
                       C'était un {role === 'undercover' ? 'UNDERCOVER 🕵️' : 'CIVIL 👤'}
                     </p>
@@ -406,7 +406,7 @@ function UndercoverGame({ players, myPlayerId, gameState, updateGameData, endGam
             <div className="text-center">
               <button
                 onClick={nextRound}
-                className="flex items-center gap-2 mx-auto bg-neon-purple/10 border border-neon-purple/20 text-neon-purple rounded-xl px-6 py-3 font-medium hover:bg-neon-purple/20 transition-colors"
+                className="flex items-center gap-2 mx-auto bg-accent-purple/10 border border-accent-purple/20 text-accent-purple rounded-xl px-6 py-3 font-medium hover:bg-accent-purple/20 transition-colors"
               >
                 <SkipForward className="w-4 h-4" />
                 Continuer
@@ -431,20 +431,20 @@ function UndercoverGame({ players, myPlayerId, gameState, updateGameData, endGam
           >
             <p className="font-display text-2xl">
               {winner === 'civilians' ? (
-                <span className="text-neon-blue">Les CIVILS ont gagné ! 🎉</span>
+                <span className="text-accent-blue">Les CIVILS ont gagné ! 🎉</span>
               ) : (
-                <span className="text-neon-pink">L'UNDERCOVER a gagné ! 🕵️</span>
+                <span className="text-accent-pink">L'UNDERCOVER a gagné ! 🕵️</span>
               )}
             </p>
           </motion.div>
 
           {/* Reveal words */}
-          <div className="bg-surface-light border border-border/30 rounded-xl p-4 text-center space-y-2">
+          <div className="bg-elevated border border-border/30 rounded-xl p-4 text-center space-y-2">
             <p className="text-text-muted text-sm">Les mots étaient :</p>
             <p className="text-lg">
-              Civil : <span className="font-display text-neon-blue">{data.wordCivilian as string}</span>
+              Civil : <span className="font-display text-accent-blue">{data.wordCivilian as string}</span>
               {' '} — {' '}
-              Undercover : <span className="font-display text-neon-pink">{data.wordUndercover as string}</span>
+              Undercover : <span className="font-display text-accent-pink">{data.wordUndercover as string}</span>
             </p>
           </div>
 
@@ -462,8 +462,8 @@ function UndercoverGame({ players, myPlayerId, gameState, updateGameData, endGam
                   transition={{ delay: i * 0.06 }}
                   className={`flex items-center gap-3 rounded-xl p-3 border ${
                     isUC
-                      ? 'bg-neon-pink/10 border-neon-pink/30'
-                      : 'bg-neon-blue/5 border-neon-blue/20'
+                      ? 'bg-accent-pink/10 border-accent-pink/30'
+                      : 'bg-accent-blue/5 border-accent-blue/20'
                   }`}
                 >
                   <img src={p.avatar} alt="" className="w-7 h-7 rounded-full" />
@@ -472,8 +472,8 @@ function UndercoverGame({ players, myPlayerId, gameState, updateGameData, endGam
                   </span>
                   <span className={`text-xs font-display px-2 py-0.5 rounded-md ${
                     isUC
-                      ? 'bg-neon-pink/15 text-neon-pink'
-                      : 'bg-neon-blue/10 text-neon-blue'
+                      ? 'bg-accent-pink/15 text-accent-pink'
+                      : 'bg-accent-blue/10 text-accent-blue'
                   }`}>
                     {isUC ? '🕵️ Undercover' : '👤 Civil'}
                   </span>
@@ -486,7 +486,7 @@ function UndercoverGame({ players, myPlayerId, gameState, updateGameData, endGam
           <div className="text-center">
             <button
               onClick={finishGame}
-              className="bg-neon-purple/10 border border-neon-purple/20 text-neon-purple rounded-xl px-6 py-3 font-medium hover:bg-neon-purple/20 transition-colors"
+              className="bg-accent-purple/10 border border-accent-purple/20 text-accent-purple rounded-xl px-6 py-3 font-medium hover:bg-accent-purple/20 transition-colors"
             >
               Terminer
             </button>
@@ -508,8 +508,8 @@ function UndercoverGame({ players, myPlayerId, gameState, updateGameData, endGam
                   key={id}
                   className={`text-xs px-2 py-1 rounded-md ${
                     role === 'undercover'
-                      ? 'bg-neon-pink/10 text-neon-pink'
-                      : 'bg-surface-light text-text-muted'
+                      ? 'bg-accent-pink/10 text-accent-pink'
+                      : 'bg-elevated text-text-muted'
                   }`}
                 >
                   <img src={p.avatar} alt="" className="w-5 h-5 rounded-full inline align-middle" /> {p.name} {role === 'undercover' ? '🕵️' : '👤'}

@@ -49,6 +49,12 @@ app.get('/api/words/:gameId', async (req, res) => {
   res.json(words)
 })
 
+// Public rooms list
+app.get('/api/rooms', (_req, res) => {
+  const rooms = roomManager.getPublicRooms()
+  res.json(rooms)
+})
+
 app.get('/api/health', (_req, res) => {
   res.json({ ok: true, rooms: roomManager.getRoomCount() })
 })

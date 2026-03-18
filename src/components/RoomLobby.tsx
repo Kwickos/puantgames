@@ -1,37 +1,18 @@
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'motion/react'
-import { Crown, X, Copy, Check, Users, LogOut } from 'lucide-react'
-import { useState } from 'react'
+import { X, LogOut, Play, Settings } from 'lucide-react'
 import { useRoomStore } from '@/stores/roomStore'
 import { useRoom } from '@/hooks/useRoom'
 import { registry } from '@/lib/registry'
 import type { GameSetting } from '@/types/game'
 import GameCard from './GameCard'
-
-const colorRingMap: Record<string, string> = {
-  'neon-green': 'ring-neon-green/60',
-  'neon-pink': 'ring-neon-pink/60',
-  'neon-blue': 'ring-neon-blue/60',
-  'neon-yellow': 'ring-neon-yellow/60',
-  'neon-purple': 'ring-neon-purple/60',
-  'neon-orange': 'ring-neon-orange/60',
-}
-
-const colorDotMap: Record<string, string> = {
-  'neon-green': 'bg-neon-green',
-  'neon-pink': 'bg-neon-pink',
-  'neon-blue': 'bg-neon-blue',
-  'neon-yellow': 'bg-neon-yellow',
-  'neon-purple': 'bg-neon-purple',
-  'neon-orange': 'bg-neon-orange',
-}
+import RoomCodeDisplay from './RoomCodeDisplay'
 
 export default function RoomLobby() {
   const navigate = useNavigate()
   const room = useRoomStore(s => s.room)!
   const isHost = useRoomStore(s => s.isHost())
   const { selectGame, updateSettings, startGame, kickPlayer, leaveRoom } = useRoom()
-  const [copied, setCopied] = useState(false)
 
   const handleLeave = () => {
     navigate('/')
@@ -43,94 +24,67 @@ export default function RoomLobby() {
   const connectedCount = room.players.filter(p => p.connected).length
   const canStart = selectedGame && connectedCount >= (selectedGame?.config.minPlayers ?? 2)
 
-  const inviteLink = `${window.location.origin}/room/${room.code}`
-  const copyLink = async () => {
-    await navigator.clipboard.writeText(inviteLink)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
-  }
-
   return (
-    <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
+    <div className="flex gap-0 -mx-6 -my-8 min-h-[calc(100vh-64px)]">
 
-      {/* ─── LEFT: Room info + Players ─── */}
-      <div className="lg:w-80 xl:w-96 shrink-0 flex flex-col gap-4">
+      {/* ─── SIDEBAR (left, fixed width 300) ─── */}
+      <div className="w-[300px] shrink-0 bg-card border-r border-border-subtle flex flex-col gap-[16px] p-[16px]">
 
-        {/* Room code */}
-        <div className="gradient-border">
-          <div className="p-5">
-            <p className="text-[11px] uppercase tracking-[0.2em] text-text-muted font-medium mb-3">
-              Code de la room
-            </p>
-            <div className="flex items-center gap-3">
-              <p className="font-display text-4xl tracking-[0.25em] text-neon-green text-glow-green">
-                {room.code}
-              </p>
-              <button
-                onClick={copyLink}
-                className="ml-auto p-2.5 rounded-lg bg-surface-light border border-border/50 text-text-muted hover:text-neon-green hover:border-neon-green/30 transition-colors"
-              >
-                {copied ? <Check className="w-4 h-4 text-neon-green" /> : <Copy className="w-4 h-4" />}
-              </button>
-            </div>
-            {copied && (
-              <p className="text-neon-green text-xs font-medium mt-2">Lien copie !</p>
-            )}
-          </div>
-        </div>
+        {/* Room Code Section */}
+        <RoomCodeDisplay code={room.code} />
 
-        {/* Players */}
-        <div className="gradient-border flex-1">
-          <div className="px-5 pt-5 pb-3 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Users className="w-4 h-4 text-text-muted" />
-              <h2 className="text-[11px] uppercase tracking-[0.2em] text-text-muted font-medium">
-                Joueurs
-              </h2>
-            </div>
-            <span className="text-xs tabular-nums font-medium text-text-secondary bg-surface-light px-2 py-0.5 rounded-md">
+        {/* Players Section */}
+        <div className="flex flex-col gap-[8px] flex-1">
+          {/* Players header */}
+          <div className="flex items-center justify-between">
+            <span className="font-mono text-[11px] font-medium tracking-[2px] text-text-muted">
+              JOUEURS
+            </span>
+            <span className="font-mono text-[11px] font-medium text-accent">
               {connectedCount}/{room.players.length}
             </span>
           </div>
 
-          <div className="px-3 pb-3 space-y-1">
+          {/* Players list */}
+          <div className="flex flex-col gap-[6px]">
             {room.players.map((player, i) => (
               <motion.div
                 key={player.id}
                 initial={{ opacity: 0, x: -12 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: i * 0.05 }}
-                className="flex items-center gap-3 px-3 py-2.5 rounded-xl group hover:bg-surface-light/60 transition-colors"
+                className={`flex items-center gap-[10px] rounded-[10px] bg-elevated px-[10px] py-[8px] group ${
+                  player.id === room.hostId
+                    ? 'border border-accent/20'
+                    : 'border border-border-subtle'
+                } ${!player.connected ? 'opacity-40' : ''}`}
               >
-                <div className="relative">
-                  <img
-                    src={player.avatar}
-                    alt=""
-                    className={`w-9 h-9 rounded-full ring-2 ${colorRingMap[player.color] ?? 'ring-border'} ${!player.connected ? 'opacity-40 grayscale' : ''}`}
-                  />
-                  {player.connected && (
-                    <span className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full ${colorDotMap[player.color] ?? 'bg-neon-green'} border-2 border-surface`} />
-                  )}
-                </div>
+                {/* Avatar */}
+                <img
+                  src={player.avatar}
+                  alt=""
+                  className="w-[26px] h-[26px] rounded-full"
+                />
 
-                <div className="flex-1 min-w-0">
-                  <span className={`text-sm font-medium block truncate ${player.connected ? 'text-text-primary' : 'text-text-muted line-through'}`}>
-                    {player.name}
-                  </span>
-                  {player.id === room.hostId && (
-                    <span className="flex items-center gap-1 text-[10px] text-neon-yellow font-medium">
-                      <Crown className="w-2.5 h-2.5" />
-                      Host
-                    </span>
-                  )}
-                </div>
+                {/* Name */}
+                <span className={`text-[13px] font-semibold font-body flex-1 min-w-0 truncate ${
+                  player.connected ? 'text-text-primary' : 'text-text-muted line-through'
+                }`}>
+                  {player.name}
+                </span>
 
+                {/* Crown for host */}
+                {player.id === room.hostId && (
+                  <span className="text-[12px]">{'\u{1F451}'}</span>
+                )}
+
+                {/* Kick button */}
                 {isHost && player.id !== room.hostId && (
                   <button
                     onClick={() => kickPlayer(player.id)}
-                    className="opacity-0 group-hover:opacity-100 p-1 rounded-md text-text-muted hover:text-neon-pink hover:bg-neon-pink/10 transition-all"
+                    className="opacity-0 group-hover:opacity-100 p-1 rounded-md text-text-muted hover:text-accent-red transition-all"
                   >
-                    <X className="w-3.5 h-3.5" />
+                    <X className="w-[14px] h-[14px]" />
                   </button>
                 )}
               </motion.div>
@@ -138,34 +92,57 @@ export default function RoomLobby() {
           </div>
         </div>
 
-        {/* Leave */}
+        {/* Settings Section */}
+        {selectedGame?.settings && selectedGame.settings.length > 0 && (
+          <div className="bg-elevated rounded-[14px] border border-border-subtle p-[20px] flex flex-col gap-[16px]">
+            {/* Settings header */}
+            <div className="flex items-center gap-[8px]">
+              <Settings className="w-[16px] h-[16px] text-accent" />
+              <span className="font-mono text-[11px] font-medium tracking-[1px] text-text-muted">
+                PARAMETRES — {selectedGame.name.toUpperCase()}
+              </span>
+            </div>
+
+            {/* Settings controls */}
+            <div className="flex flex-col gap-[12px]">
+              {selectedGame.settings.filter((s) => {
+                if (!s.visibleWhen) return true
+                const depValue = room.settings[s.visibleWhen.settingId] ??
+                  selectedGame.settings?.find(d => d.id === s.visibleWhen!.settingId)?.default
+                return depValue === s.visibleWhen.value
+              }).map((setting) => (
+                <SettingRow
+                  key={setting.id}
+                  setting={setting}
+                  value={room.settings[setting.id] ?? setting.default}
+                  onChange={isHost ? (v) => updateSettings({ [setting.id]: v }) : undefined}
+                />
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Leave button */}
         <button
           onClick={handleLeave}
-          className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-border bg-surface text-text-secondary text-sm hover:text-neon-pink hover:border-neon-pink/30 transition-colors"
+          className="flex items-center justify-center gap-[8px] rounded-[10px] bg-elevated border border-accent-red/25 py-[10px] text-accent-red hover:bg-accent-red/10 transition-colors"
         >
-          <LogOut className="w-4 h-4" />
-          Quitter la room
+          <LogOut className="w-[14px] h-[14px]" />
+          <span className="text-[12px] font-semibold font-body">Quitter la room</span>
         </button>
       </div>
 
-      {/* ─── RIGHT: Game selection + Settings + Launch ─── */}
-      <div className="flex-1 flex flex-col gap-5 min-w-0">
+      {/* ─── MAIN AREA (right, flex) ─── */}
+      <div className="flex-1 flex flex-col gap-[20px] p-[24px] min-w-0">
 
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <h2 className="font-display text-lg text-text-secondary tracking-wide">
-            {isHost ? 'CHOISIS UN JEU' : 'JEU SELECTIONNE'}
-          </h2>
-          {selectedGame && (
-            <span className="text-xs text-neon-green bg-neon-green/10 border border-neon-green/20 px-2.5 py-1 rounded-full font-medium">
-              {selectedGame.emoji} {selectedGame.name}
-            </span>
-          )}
-        </div>
+        {/* Title */}
+        <h2 className="font-display text-[20px] font-bold text-text-primary">
+          {isHost ? 'Choisir un jeu' : 'Jeu selectionne'}
+        </h2>
 
-        {/* Games */}
+        {/* Games grid */}
         {isHost ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-[10px]">
             {games.map((game, i) => (
               <div
                 key={game.id}
@@ -177,56 +154,44 @@ export default function RoomLobby() {
             ))}
           </div>
         ) : selectedGame ? (
-          <div className="gradient-border">
-            <div className="p-8 text-center">
-              <span className="text-5xl">{selectedGame.emoji}</span>
-              <p className="font-display text-xl mt-3">{selectedGame.name}</p>
-              <p className="text-text-muted text-sm mt-2">En attente du lancement par l'hote...</p>
+          <div className="bg-card rounded-[12px] border border-border-subtle p-[14px] flex flex-col gap-[6px]">
+            <div className="flex items-center gap-[8px]">
+              <span className="text-[18px]">{selectedGame.emoji}</span>
+              <span className="font-display text-[14px] font-bold text-text-primary">
+                {selectedGame.name}
+              </span>
             </div>
+            <p className="text-[12px] font-medium text-text-secondary font-body">
+              En attente du lancement par l'hote...
+            </p>
           </div>
         ) : (
-          <div className="text-center py-12 text-text-muted">
+          <div className="text-center py-[48px] text-text-muted text-[14px] font-body">
             L'hote choisit un jeu...
           </div>
         )}
 
-        {/* Settings */}
-        {selectedGame?.settings && selectedGame.settings.length > 0 && (
-          <div className="space-y-2">
-            {selectedGame.settings.filter((s) => {
-              if (!s.visibleWhen) return true
-              const depValue = room.settings[s.visibleWhen.settingId] ??
-                selectedGame.settings?.find(d => d.id === s.visibleWhen!.settingId)?.default
-              return depValue === s.visibleWhen.value
-            }).map((setting) => (
-              <SettingRow
-                key={setting.id}
-                setting={setting}
-                value={room.settings[setting.id] ?? setting.default}
-                onChange={isHost ? (v) => updateSettings({ [setting.id]: v }) : undefined}
-              />
-            ))}
-          </div>
-        )}
+        {/* Launch section */}
+        <div className="flex items-center justify-between mt-auto">
+          {isHost && selectedGame && !canStart ? (
+            <span className="text-[12px] font-medium font-body text-text-muted">
+              Minimum {selectedGame.config.minPlayers} joueurs requis
+            </span>
+          ) : (
+            <span />
+          )}
 
-        {/* Launch */}
-        <div className="flex gap-3 mt-auto pt-4">
           {isHost && (
             <button
               onClick={startGame}
               disabled={!canStart}
-              className="flex-1 py-3.5 rounded-xl font-display tracking-wide text-lg bg-neon-green/10 border border-neon-green/20 text-neon-green hover:bg-neon-green/20 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+              className="flex items-center gap-[8px] bg-accent rounded-[12px] px-[32px] py-[12px] text-text-inverted hover:brightness-110 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
             >
-              LANCER LA PARTIE
+              <Play className="w-[16px] h-[16px]" />
+              <span className="font-display text-[13px] font-bold">LANCER LA PARTIE</span>
             </button>
           )}
         </div>
-
-        {isHost && selectedGame && !canStart && (
-          <p className="text-center text-text-muted text-xs">
-            Il faut au moins {selectedGame.config.minPlayers} joueurs connectes pour lancer
-          </p>
-        )}
       </div>
     </div>
   )
@@ -238,9 +203,11 @@ function SettingRow({ setting, value, onChange }: {
   onChange?: (value: number) => void
 }) {
   return (
-    <div className="flex items-center gap-4 bg-surface-light border border-border/30 rounded-xl p-3">
-      <span className="text-sm text-text-secondary font-medium min-w-20">{setting.label}</span>
-      <div className="flex gap-1.5 flex-wrap">
+    <div className="flex flex-col gap-[6px]">
+      <span className="text-[12px] font-semibold font-body text-text-primary">
+        {setting.label}
+      </span>
+      <div className="flex gap-[6px]">
         {setting.options.map((opt) => {
           const active = opt.value === value
           return (
@@ -248,12 +215,12 @@ function SettingRow({ setting, value, onChange }: {
               key={opt.value}
               onClick={() => onChange?.(opt.value)}
               disabled={!onChange}
-              className={`px-3 py-1 rounded-lg text-sm font-medium transition-all ${
+              className={`flex-1 flex items-center justify-center rounded-[8px] px-[14px] py-[8px] font-mono text-[12px] transition-all ${
                 active
-                  ? 'bg-neon-green/15 text-neon-green border border-neon-green/30'
+                  ? 'bg-accent text-text-inverted font-semibold'
                   : onChange
-                    ? 'bg-surface border border-border/50 text-text-muted hover:text-text-secondary hover:border-border-light'
-                    : 'bg-surface border border-border/50 text-text-muted cursor-default'
+                    ? 'bg-card text-text-secondary hover:text-text-primary'
+                    : 'bg-card text-text-secondary cursor-default'
               }`}
             >
               {opt.label}

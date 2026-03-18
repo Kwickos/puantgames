@@ -73,11 +73,11 @@ function AimTrainerGame({ players, myPlayerId, gameState, updateScore, endGame }
     <div className="space-y-4">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <div className="font-display text-2xl text-neon-orange">
+        <div className="font-display text-2xl text-accent-orange">
           {myScore}{mode === 1 ? ` / ${targetCount}` : ''}
         </div>
         {mode === 0 && (
-          <div className={`font-display text-2xl ${timeLeft <= 5 ? 'text-neon-pink' : 'text-neon-yellow'}`}>
+          <div className={`font-display text-2xl ${timeLeft <= 5 ? 'text-accent-pink' : 'text-accent-orange'}`}>
             {timeLeft}s
           </div>
         )}
@@ -96,7 +96,7 @@ function AimTrainerGame({ players, myPlayerId, gameState, updateScore, endGame }
         {!gameOver ? (
           <button
             onClick={handleTargetClick}
-            className="absolute w-12 h-12 rounded-full bg-neon-orange border-2 border-neon-orange/50 hover:brightness-110 transition-[filter] -translate-x-1/2 -translate-y-1/2"
+            className="absolute w-12 h-12 rounded-full bg-accent-orange border-2 border-accent-orange/50 hover:brightness-110 transition-[filter] -translate-x-1/2 -translate-y-1/2"
             style={{
               left: `${targetPos.x}%`,
               top: `${targetPos.y}%`,
@@ -115,7 +115,7 @@ function AimTrainerGame({ players, myPlayerId, gameState, updateScore, endGame }
           Clique sur les cibles le plus vite possible !
         </p>
       ) : (
-        <p className="text-neon-green text-sm text-center font-medium">
+        <p className="text-accent text-sm text-center font-medium">
           Score final : {myScore} cibles
         </p>
       )}

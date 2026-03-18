@@ -220,6 +220,40 @@ export class RoomManager {
     return result
   }
 
+  getPublicRooms(): {
+    code: string
+    gameId: string | null
+    gameName: string | null
+    hostName: string
+    playerCount: number
+    maxPlayers: number
+    status: string
+  }[] {
+    const result: {
+      code: string
+      gameId: string | null
+      gameName: string | null
+      hostName: string
+      playerCount: number
+      maxPlayers: number
+      status: string
+    }[] = []
+    for (const [code, room] of this.rooms) {
+      const host = room.state.players.find(p => p.id === room.state.hostId)
+      const connectedCount = room.state.players.filter(p => p.connected).length
+      result.push({
+        code,
+        gameId: room.state.gameId,
+        gameName: null, // resolved client-side from registry
+        hostName: host?.name ?? '?',
+        playerCount: connectedCount,
+        maxPlayers: 8,
+        status: room.state.gameState.status,
+      })
+    }
+    return result
+  }
+
   cleanupIfAllDisconnected(code: string): boolean {
     const room = this.rooms.get(code)
     if (!room) return false

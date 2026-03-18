@@ -1,32 +1,34 @@
 @import "tailwindcss";
 
 @theme {
-  --font-display: "Bowlby One", cursive;
-  --font-body: "DM Sans", sans-serif;
+  --font-display: "Space Grotesk", sans-serif;
+  --font-body: "Manrope", sans-serif;
+  --font-mono: "Space Mono", monospace;
 
-  --color-midnight: #0a0a0f;
-  --color-void: #12121a;
-  --color-surface: #1a1a26;
-  --color-surface-light: #242438;
-  --color-surface-hover: #2a2a42;
-  --color-border: #2e2e48;
-  --color-border-light: #3a3a58;
+  --color-page: #0A0A0A;
+  --color-card: #18181B;
+  --color-elevated: #27272A;
+  --color-border: #3F3F46;
+  --color-border-subtle: #27272A;
 
-  --color-neon-green: #39ff14;
-  --color-neon-pink: #ff2e97;
-  --color-neon-blue: #00d4ff;
-  --color-neon-yellow: #ffe600;
-  --color-neon-purple: #b84dff;
-  --color-neon-orange: #ff6b2b;
+  --color-accent: #C4F82A;
+  --color-accent-blue: #2563EB;
+  --color-accent-pink: #EC4899;
+  --color-accent-orange: #F97316;
+  --color-accent-purple: #7C3AED;
+  --color-accent-red: #EF4444;
+  --color-accent-green: #22C55E;
+  --color-accent-cyan: #06B6D4;
 
-  --color-text-primary: #eeeef2;
-  --color-text-secondary: #8888a8;
-  --color-text-muted: #55556a;
+  --color-text-primary: #FFFFFF;
+  --color-text-secondary: #A1A1AA;
+  --color-text-muted: #71717A;
+  --color-text-inverted: #0A0A0A;
 }
 
 @layer base {
   html {
-    background-color: var(--color-midnight);
+    background-color: var(--color-page);
     color: var(--color-text-primary);
     font-family: var(--font-body);
     scroll-behavior: smooth;
@@ -41,10 +43,10 @@
     width: 6px;
   }
   ::-webkit-scrollbar-track {
-    background: var(--color-void);
+    background: var(--color-page);
   }
   ::-webkit-scrollbar-thumb {
-    background: var(--color-border-light);
+    background: var(--color-border);
     border-radius: 3px;
   }
 }
@@ -62,16 +64,7 @@
     background-size: 256px 256px;
   }
 
-  .text-glow-green {
-    text-shadow: 0 0 20px var(--color-neon-green), 0 0 40px rgba(57, 255, 20, 0.3);
-  }
-  .text-glow-pink {
-    text-shadow: 0 0 20px var(--color-neon-pink), 0 0 40px rgba(255, 46, 151, 0.3);
-  }
-
-  .gradient-border {
-    background: var(--color-surface);
-    border: 1px solid var(--color-border);
-    border-radius: 16px;
+  .text-glow-accent {
+    text-shadow: 0 0 20px var(--color-accent), 0 0 40px rgba(196, 248, 42, 0.3);
   }
 }

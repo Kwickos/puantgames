@@ -1,5 +1,5 @@
-import { Outlet, Link, useLocation } from 'react-router-dom'
-import { Gamepad2, Home, LogOut, Shield, Trophy, ChevronDown } from 'lucide-react'
+import { Outlet, Link, NavLink, useLocation } from 'react-router-dom'
+import { Gamepad2, LogOut, ChevronDown } from 'lucide-react'
 import { motion, AnimatePresence } from 'motion/react'
 import { useState, useRef, useEffect } from 'react'
 import { useRoomStore } from '@/stores/roomStore'
@@ -30,94 +30,73 @@ export default function Layout() {
     setUserMenuOpen(false)
   }, [location.pathname])
 
-  return (
-    <div className="noise-bg min-h-screen flex flex-col relative">
-      {/* Ambient blobs */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
-        <div className="absolute -top-40 -left-40 w-[500px] h-[500px] rounded-full bg-neon-purple/5 blur-[120px]" />
-        <div className="absolute -bottom-40 -right-40 w-[600px] h-[600px] rounded-full bg-neon-blue/5 blur-[150px]" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] rounded-full bg-neon-green/5 blur-[100px]" />
-      </div>
+  const isAdmin = location.pathname.startsWith('/admin')
 
-      {/* Header */}
-      <header className="relative z-20 border-b border-border/50 backdrop-blur-md bg-midnight/60">
-        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center">
+  const navLinkClass = ({ isActive }: { isActive: boolean }) =>
+    `font-body text-[14px] transition-colors no-underline ${
+      isActive
+        ? 'text-accent font-semibold'
+        : 'text-text-secondary font-medium hover:text-text-primary'
+    }`
+
+  return (
+    <div className="min-h-screen flex flex-col bg-page">
+      {/* Header — hidden on admin pages */}
+      {!isAdmin && (
+        <header className="flex items-center justify-between h-[56px] px-[24px] bg-card border-b border-border shrink-0">
           {/* Left: Logo */}
-          <Link to="/" className="flex items-center gap-3 group no-underline shrink-0">
-            <div className="w-10 h-10 rounded-xl bg-neon-green/10 border border-neon-green/20 flex items-center justify-center group-hover:bg-neon-green/20 transition-colors">
-              <Gamepad2 className="w-5 h-5 text-neon-green" />
-            </div>
-            <span className="font-display text-xl tracking-wide text-text-primary">
-              PUANT<span className="text-neon-green">GAMES</span>
+          <Link to="/" className="flex items-center gap-[10px] no-underline">
+            <Gamepad2 className="w-[24px] h-[24px] text-accent" />
+            <span className="font-display text-[18px] font-bold tracking-[2px] text-accent">
+              PUANT GAMES
             </span>
           </Link>
 
           {/* Center: Navigation */}
-          <nav className="flex items-center gap-1 ml-8">
-            {room && (
-              <span className="text-text-muted text-xs font-display tracking-wider bg-surface-light px-3 py-1 rounded-lg">
+          <nav className="flex items-center gap-[32px]">
+            {room ? (
+              <span className="text-text-muted text-xs font-display tracking-wider">
                 ROOM {room.code}
               </span>
-            )}
-
-            {!room && (
+            ) : (
               <>
-                <Link
-                  to="/"
-                  className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all no-underline ${
-                    location.pathname === '/'
-                      ? 'bg-surface-light text-text-primary'
-                      : 'text-text-secondary hover:text-text-primary hover:bg-surface/60'
-                  }`}
-                >
-                  <Home className="w-4 h-4" />
+                <NavLink to="/" end className={navLinkClass}>
                   Accueil
-                </Link>
-                <Link
-                  to="/leaderboard"
-                  className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all no-underline ${
-                    location.pathname === '/leaderboard'
-                      ? 'bg-surface-light text-text-primary'
-                      : 'text-text-secondary hover:text-text-primary hover:bg-surface/60'
-                  }`}
-                >
-                  <Trophy className="w-4 h-4" />
+                </NavLink>
+                <NavLink to="/rooms" className={navLinkClass}>
+                  Salons
+                </NavLink>
+                <NavLink to="/leaderboard" className={navLinkClass}>
                   Classement
-                </Link>
-                {user?.isAdmin && (
-                  <Link
-                    to="/admin"
-                    className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all no-underline ${
-                      location.pathname === '/admin'
-                        ? 'bg-neon-pink/10 text-neon-pink border border-neon-pink/20'
-                        : 'text-text-secondary hover:text-neon-pink hover:bg-neon-pink/5'
-                    }`}
-                  >
-                    <Shield className="w-4 h-4" />
-                    Admin
-                  </Link>
-                )}
+                </NavLink>
+                <NavLink to="/games" className={navLinkClass}>
+                  Jeux
+                </NavLink>
               </>
             )}
           </nav>
 
-          {/* Right: User section (pushed to far right) */}
-          <div className="ml-auto">
+          {/* Right: User area */}
+          <div className="flex items-center">
             {user && (
               <div className="relative" ref={menuRef}>
                 <button
                   onClick={() => setUserMenuOpen(v => !v)}
-                  className="flex items-center gap-2.5 px-3 py-1.5 rounded-xl hover:bg-surface-light/60 transition-colors"
+                  className="flex items-center gap-[10px]"
                 >
                   <img
                     src={user.avatarUrl}
                     alt=""
-                    className="w-8 h-8 rounded-full ring-2 ring-border/60"
+                    className="w-[32px] h-[32px] rounded-full ring-2 ring-accent bg-elevated"
                   />
-                  <span className="text-sm font-medium text-text-primary hidden sm:block">
+                  <span className="font-body text-[14px] font-medium text-text-primary hidden sm:block">
                     {user.globalName ?? user.username}
                   </span>
-                  <ChevronDown className={`w-3.5 h-3.5 text-text-muted transition-transform ${userMenuOpen ? 'rotate-180' : ''}`} />
+                  <ChevronDown
+                    className={`w-3.5 h-3.5 text-text-muted transition-transform ${
+                      userMenuOpen ? 'rotate-180' : ''
+                    }`}
+                  />
                 </button>
 
                 {/* Dropdown menu */}
@@ -128,10 +107,9 @@ export default function Layout() {
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: 4, scale: 0.97 }}
                       transition={{ duration: 0.12 }}
-                      className="absolute right-0 top-full mt-2 w-52 rounded-xl border border-border bg-midnight shadow-2xl shadow-black/60"
-                      style={{ zIndex: 9999 }}
+                      className="absolute right-0 top-full mt-2 w-52 rounded-[14px] border border-border bg-card shadow-2xl shadow-black/60 z-50"
                     >
-                      <div className="px-4 py-3 border-b border-border/50">
+                      <div className="px-4 py-3 border-b border-border">
                         <p className="text-sm font-medium text-text-primary">
                           {user.globalName ?? user.username}
                         </p>
@@ -139,7 +117,7 @@ export default function Layout() {
                       <div className="p-1.5">
                         <button
                           onClick={logout}
-                          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-text-secondary hover:text-neon-pink hover:bg-neon-pink/5 transition-colors"
+                          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-text-secondary hover:text-accent-pink hover:bg-accent-pink/5 transition-colors"
                         >
                           <LogOut className="w-4 h-4" />
                           Deconnexion
@@ -150,12 +128,22 @@ export default function Layout() {
                 </AnimatePresence>
               </div>
             )}
+
+            {/* Admin link (text only, no icon, no special styling) */}
+            {!room && user?.isAdmin && (
+              <Link
+                to="/admin"
+                className="font-body text-[14px] font-medium text-text-secondary hover:text-text-primary transition-colors no-underline ml-[32px]"
+              >
+                Admin
+              </Link>
+            )}
           </div>
-        </div>
-      </header>
+        </header>
+      )}
 
       {/* Content */}
-      <main className="relative z-10 flex-1">
+      <main className="flex-1 flex flex-col">
         <AnimatePresence mode="wait">
           <motion.div
             key={location.pathname}
@@ -163,17 +151,12 @@ export default function Layout() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -12 }}
             transition={{ duration: 0.2, ease: 'easeOut' }}
-            className="max-w-7xl mx-auto px-6 py-8"
+            className="flex-1 flex flex-col"
           >
             <Outlet />
           </motion.div>
         </AnimatePresence>
       </main>
-
-      {/* Footer */}
-      <footer className="relative z-10 border-t border-border/30 py-4 text-center text-text-muted text-sm">
-        PuantGames &mdash; La plateforme de jeu entre potes
-      </footer>
     </div>
   )
 }

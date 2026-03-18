@@ -50,7 +50,7 @@ export default function Room() {
   if (authLoading || !user) {
     return (
       <div className="text-center py-20">
-        <div className="w-8 h-8 border-2 border-neon-green border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+        <div className="w-8 h-8 border-2 border-accent border-t-transparent rounded-full animate-spin mx-auto mb-4" />
         <p className="text-text-muted">Chargement...</p>
       </div>
     )
@@ -59,7 +59,7 @@ export default function Room() {
   if (error) {
     return (
       <div className="text-center py-20">
-        <p className="text-neon-pink text-lg mb-2">{error}</p>
+        <p className="text-accent-red text-lg mb-2">{error}</p>
         <p className="text-text-muted text-sm">Redirection vers l'accueil...</p>
       </div>
     )
@@ -68,7 +68,7 @@ export default function Room() {
   if (!room || room.code !== code?.toUpperCase()) {
     return (
       <div className="text-center py-20">
-        <div className="w-8 h-8 border-2 border-neon-green border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+        <div className="w-8 h-8 border-2 border-accent border-t-transparent rounded-full animate-spin mx-auto mb-4" />
         <p className="text-text-muted">Connexion a la room...</p>
       </div>
     )

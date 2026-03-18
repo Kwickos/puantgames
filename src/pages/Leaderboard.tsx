@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'motion/react'
-import { Trophy, Crown, Medal } from 'lucide-react'
 
 interface LeaderboardEntry {
   discordId: string
@@ -14,11 +13,28 @@ interface LeaderboardEntry {
 const TABS = [
   { id: '', label: 'Global' },
   { id: 'click-race', label: 'Click Race' },
-  { id: 'horse-race', label: 'Course de Chevaux' },
+  { id: 'horse-race', label: 'Horse Race' },
   { id: 'undercover', label: 'Undercover' },
   { id: 'codenames', label: 'Codenames' },
   { id: 'aim-trainer', label: 'Aim Trainer' },
 ] as const
+
+function getWinRateColor(winrate: number) {
+  if (winrate >= 60) return { text: 'text-accent-green', bg: 'bg-accent-green/[0.125]' }
+  if (winrate >= 40) return { text: 'text-accent-orange', bg: 'bg-accent-orange/[0.125]' }
+  return { text: 'text-accent-red', bg: 'bg-accent-red/[0.125]' }
+}
+
+function getRankDisplay(index: number) {
+  if (index === 0) return <span className="text-[20px]">&#x1F947;</span>
+  if (index === 1) return <span className="text-[20px]">&#x1F948;</span>
+  if (index === 2) return <span className="text-[20px]">&#x1F949;</span>
+  return (
+    <span className="font-display text-[14px] font-semibold text-text-secondary">
+      {index + 1}
+    </span>
+  )
+}
 
 export default function Leaderboard() {
   const [tab, setTab] = useState('')
@@ -38,21 +54,22 @@ export default function Leaderboard() {
   }, [tab])
 
   return (
-    <div className="max-w-2xl mx-auto space-y-6">
-      {/* Header */}
+    <div className="flex flex-col items-center gap-[24px] py-[32px] px-[80px] h-full w-full">
+      {/* Title section */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="text-center"
+        className="flex flex-col items-center gap-[8px]"
       >
-        <div className="inline-flex items-center gap-3 mb-2">
-          <Trophy className="w-8 h-8 text-neon-green" />
-          <h1 className="font-display text-3xl tracking-wide">
-            <span className="text-text-primary">CLASSE</span>
-            <span className="text-neon-green">MENT</span>
+        <div className="flex items-center gap-[12px]">
+          <span className="text-[32px]">&#x1F3C6;</span>
+          <h1 className="font-display text-[32px] font-[800] text-text-primary">
+            CLASSEMENT
           </h1>
         </div>
-        <p className="text-text-muted text-sm">Qui est le plus puant ?</p>
+        <p className="font-body text-[16px] font-medium text-text-secondary">
+          Qui est le plus puant ?
+        </p>
       </motion.div>
 
       {/* Tabs */}
@@ -60,16 +77,16 @@ export default function Leaderboard() {
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
-        className="flex gap-2 justify-center flex-wrap"
+        className="flex gap-[8px] rounded-[14px] bg-card p-[4px]"
       >
         {TABS.map(t => (
           <button
             key={t.id}
             onClick={() => setTab(t.id)}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+            className={`px-[20px] py-[10px] rounded-[10px] font-display text-[13px] transition-all ${
               tab === t.id
-                ? 'bg-neon-green/10 border border-neon-green/30 text-neon-green'
-                : 'bg-surface-light border border-border text-text-secondary hover:text-text-primary hover:border-border/80'
+                ? 'bg-accent font-bold text-text-inverted'
+                : 'font-semibold text-text-secondary hover:text-text-primary'
             }`}
           >
             {t.label}
@@ -82,96 +99,105 @@ export default function Leaderboard() {
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
-        className="gradient-border"
+        className="w-full flex-1 rounded-[16px] bg-card border border-border-subtle overflow-hidden"
       >
-        <div className="p-4">
-          {loading ? (
-            <div className="text-center py-12">
-              <div className="w-8 h-8 border-2 border-neon-green border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-              <p className="text-text-muted text-sm">Chargement...</p>
-            </div>
-          ) : entries.length === 0 ? (
-            <div className="text-center py-12">
-              <Trophy className="w-12 h-12 text-text-muted/30 mx-auto mb-3" />
-              <p className="text-text-muted text-sm">Aucune partie jouee pour le moment.</p>
-            </div>
-          ) : (
-            <div className="space-y-2">
-              {/* Header row */}
-              <div className="grid grid-cols-[40px_1fr_80px_80px_80px] gap-2 px-3 py-2 text-text-muted text-xs font-medium uppercase tracking-wider">
-                <span>#</span>
-                <span>Joueur</span>
-                <span className="text-right">Victoires</span>
-                <span className="text-right">Parties</span>
-                <span className="text-right">Winrate</span>
+        {loading ? (
+          <div className="flex items-center justify-center py-[48px]">
+            <div className="w-[32px] h-[32px] border-2 border-accent border-t-transparent rounded-full animate-spin" />
+          </div>
+        ) : entries.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-[48px] gap-[12px]">
+            <span className="text-[48px] opacity-30">&#x1F3C6;</span>
+            <p className="font-body text-[14px] text-text-muted">
+              Aucune partie jouee pour le moment.
+            </p>
+          </div>
+        ) : (
+          <>
+            {/* Table header */}
+            <div className="flex items-center h-[48px] px-[24px] bg-elevated">
+              <div className="w-[60px] flex items-center justify-center">
+                <span className="font-mono text-[12px] font-medium text-text-muted">#</span>
               </div>
+              <div className="flex-1 flex items-center">
+                <span className="font-mono text-[11px] font-medium text-text-muted tracking-[1px]">
+                  JOUEUR
+                </span>
+              </div>
+              <div className="w-[100px] flex items-center justify-center">
+                <span className="font-mono text-[11px] font-medium text-text-muted tracking-[1px]">
+                  VICTOIRES
+                </span>
+              </div>
+              <div className="w-[100px] flex items-center justify-center">
+                <span className="font-mono text-[11px] font-medium text-text-muted tracking-[1px]">
+                  PARTIES
+                </span>
+              </div>
+              <div className="w-[100px] flex items-center justify-center">
+                <span className="font-mono text-[11px] font-medium text-text-muted tracking-[1px]">
+                  WIN RATE
+                </span>
+              </div>
+            </div>
 
-              {entries.map((entry, i) => (
+            {/* Rows */}
+            {entries.map((entry, i) => {
+              const wr = getWinRateColor(entry.winrate)
+              return (
                 <motion.div
                   key={entry.discordId}
                   initial={{ opacity: 0, x: -12 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.05 * i }}
-                  className={`grid grid-cols-[40px_1fr_80px_80px_80px] gap-2 items-center px-3 py-3 rounded-xl transition-colors ${
-                    i === 0
-                      ? 'bg-neon-green/5 border border-neon-green/10'
-                      : i === 1
-                        ? 'bg-neon-blue/5 border border-neon-blue/10'
-                        : i === 2
-                          ? 'bg-neon-purple/5 border border-neon-purple/10'
-                          : 'bg-surface-light/50 border border-transparent'
+                  transition={{ delay: 0.03 * i }}
+                  className={`flex items-center h-[56px] px-[24px] ${
+                    i < entries.length - 1 ? 'border-b border-border-subtle' : ''
                   }`}
                 >
-                  {/* Position */}
-                  <div className="flex items-center justify-center">
-                    {i === 0 ? (
-                      <Crown className="w-5 h-5 text-neon-green" />
-                    ) : i === 1 ? (
-                      <Medal className="w-5 h-5 text-neon-blue" />
-                    ) : i === 2 ? (
-                      <Medal className="w-5 h-5 text-neon-purple" />
-                    ) : (
-                      <span className="text-text-muted text-sm font-medium">{i + 1}</span>
-                    )}
+                  {/* Rank */}
+                  <div className="w-[60px] flex items-center justify-center">
+                    {getRankDisplay(i)}
                   </div>
 
                   {/* Player */}
-                  <div className="flex items-center gap-3 min-w-0">
+                  <div className="flex-1 flex items-center gap-[12px] min-w-0">
                     <img
                       src={entry.avatarUrl}
                       alt=""
-                      className="w-8 h-8 rounded-full shrink-0"
+                      className="w-[32px] h-[32px] rounded-full shrink-0"
                     />
-                    <span className="text-text-primary font-medium truncate">
+                    <span className={`font-body text-[14px] text-text-primary truncate ${
+                      i === 0 ? 'font-bold' : 'font-semibold'
+                    }`}>
                       {entry.username}
                     </span>
                   </div>
 
                   {/* Wins */}
-                  <span className="text-right text-neon-green font-display text-lg">
-                    {entry.wins}
-                  </span>
+                  <div className="w-[100px] flex items-center justify-center">
+                    <span className="font-display text-[16px] font-bold text-accent">
+                      {entry.wins}
+                    </span>
+                  </div>
 
-                  {/* Played */}
-                  <span className="text-right text-text-secondary text-sm">
-                    {entry.played}
-                  </span>
+                  {/* Games played */}
+                  <div className="w-[100px] flex items-center justify-center">
+                    <span className="font-display text-[14px] font-semibold text-text-primary">
+                      {entry.played}
+                    </span>
+                  </div>
 
-                  {/* Winrate */}
-                  <span className={`text-right text-sm font-medium ${
-                    entry.winrate >= 60
-                      ? 'text-neon-green'
-                      : entry.winrate >= 40
-                        ? 'text-text-secondary'
-                        : 'text-neon-pink'
-                  }`}>
-                    {entry.winrate}%
-                  </span>
+                  {/* Win rate badge */}
+                  <div className="w-[100px] flex items-center justify-center">
+                    <span className={`inline-flex items-center rounded-full px-[12px] py-[4px] font-mono text-[13px] font-semibold ${wr.bg} ${wr.text}`}>
+                      {entry.winrate}%
+                    </span>
+                  </div>
                 </motion.div>
-              ))}
-            </div>
-          )}
-        </div>
+              )
+            })}
+          </>
+        )}
       </motion.div>
     </div>
   )

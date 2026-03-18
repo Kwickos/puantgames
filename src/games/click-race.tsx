@@ -65,7 +65,7 @@ function ClickRaceGame({ players, myPlayerId, gameState, updateScore, endGame }:
         </div>
       )}
 
-      <div className="text-6xl font-display text-neon-yellow">
+      <div className="text-6xl font-display text-accent-orange">
         {timeLeft}s
       </div>
 
@@ -73,7 +73,7 @@ function ClickRaceGame({ players, myPlayerId, gameState, updateScore, endGame }:
         whileTap={{ scale: 0.95 }}
         onClick={handleClick}
         disabled={timeLeft <= 0}
-        className="w-48 h-48 rounded-full bg-neon-green/10 border-2 border-neon-green/30 text-neon-green text-6xl font-display mx-auto flex items-center justify-center hover:bg-neon-green/20 transition-colors disabled:opacity-30 cursor-pointer"
+        className="w-48 h-48 rounded-full bg-accent/10 border-2 border-accent/30 text-accent text-6xl font-display mx-auto flex items-center justify-center hover:bg-accent/20 transition-colors disabled:opacity-30 cursor-pointer"
       >
         {clicks}
       </motion.button>
@@ -83,7 +83,7 @@ function ClickRaceGame({ players, myPlayerId, gameState, updateScore, endGame }:
           Clique le plus vite possible !
         </p>
       ) : (
-        <p className="text-neon-green font-medium text-sm">
+        <p className="text-accent font-medium text-sm">
           Score envoye : {clicks} clics !
           {!submitted && ' Envoi en cours...'}
         </p>
@@ -98,8 +98,8 @@ function ClickRaceGame({ players, myPlayerId, gameState, updateScore, endGame }:
               key={p.id}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm ${
                 scored
-                  ? 'bg-neon-green/10 text-neon-green'
-                  : 'bg-surface-light text-text-muted'
+                  ? 'bg-accent/10 text-accent'
+                  : 'bg-elevated text-text-muted'
               }`}
             >
               <img src={p.avatar} alt="" className="w-5 h-5 rounded-full" />

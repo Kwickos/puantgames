@@ -374,33 +374,33 @@ function CodenamesGame({ players, myPlayerId, gameState, updateGameData, endGame
 
   // ──────── Card color helpers ────────
   const getCardBg = (index: number) => {
-    if (!colors || !revealed) return 'bg-surface-light'
+    if (!colors || !revealed) return 'bg-elevated'
     if (revealed[index]) {
       const c = colors[index]
-      if (c === 'blue') return 'bg-neon-blue/20 border-neon-blue/40'
-      if (c === 'red') return 'bg-neon-pink/20 border-neon-pink/40'
-      if (c === 'team') return 'bg-neon-blue/20 border-neon-blue/40'
+      if (c === 'blue') return 'bg-accent-blue/20 border-accent-blue/40'
+      if (c === 'red') return 'bg-accent-pink/20 border-accent-pink/40'
+      if (c === 'team') return 'bg-accent-blue/20 border-accent-blue/40'
       if (c === 'assassin') return 'bg-white/10 border-white/30'
-      return 'bg-surface-light/50 border-border/20'
+      return 'bg-elevated/50 border-border/20'
     }
     // Spymaster sees borders
     if (isSpymaster && spymasterView) {
       const c = colors[index]
-      if (c === 'blue') return 'bg-surface-light border-neon-blue/30'
-      if (c === 'red') return 'bg-surface-light border-neon-pink/30'
-      if (c === 'team') return 'bg-surface-light border-neon-blue/30'
-      if (c === 'assassin') return 'bg-surface-light border-white/30'
-      return 'bg-surface-light border-border/20'
+      if (c === 'blue') return 'bg-elevated border-accent-blue/30'
+      if (c === 'red') return 'bg-elevated border-accent-pink/30'
+      if (c === 'team') return 'bg-elevated border-accent-blue/30'
+      if (c === 'assassin') return 'bg-elevated border-white/30'
+      return 'bg-elevated border-border/20'
     }
-    return 'bg-surface-light border-border/20 hover:border-border/50'
+    return 'bg-elevated border-border/20 hover:border-border/50'
   }
 
   const getCardTextColor = (index: number) => {
     if (!colors || !revealed) return 'text-text-primary'
     if (revealed[index]) {
       const c = colors[index]
-      if (c === 'blue' || c === 'team') return 'text-neon-blue'
-      if (c === 'red') return 'text-neon-pink'
+      if (c === 'blue' || c === 'team') return 'text-accent-blue'
+      if (c === 'red') return 'text-accent-pink'
       if (c === 'assassin') return 'text-white'
       return 'text-text-muted line-through'
     }
@@ -411,7 +411,7 @@ function CodenamesGame({ players, myPlayerId, gameState, updateGameData, endGame
   if (!phase) {
     return (
       <div className="text-center py-8">
-        <div className="w-8 h-8 border-2 border-neon-blue border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+        <div className="w-8 h-8 border-2 border-accent-blue border-t-transparent rounded-full animate-spin mx-auto mb-4" />
         <p className="text-text-muted">Préparation de la partie...</p>
       </div>
     )
@@ -435,7 +435,7 @@ function CodenamesGame({ players, myPlayerId, gameState, updateGameData, endGame
             {(['blue', 'red'] as const).map(team => {
               const teamIds = (team === 'blue' ? data.teamA : data.teamB) as string[] | undefined
               const smId = (team === 'blue' ? data.spymasterA : data.spymasterB) as string | undefined
-              const colorClass = team === 'blue' ? 'neon-blue' : 'neon-pink'
+              const colorClass = team === 'blue' ? 'accent-blue' : 'accent-pink'
               return (
                 <div key={team} className={`rounded-xl border border-${colorClass}/20 bg-${colorClass}/5 p-4 space-y-3`}>
                   <h4 className={`font-display text-sm tracking-wide text-${colorClass} text-center`}>
@@ -473,13 +473,13 @@ function CodenamesGame({ players, myPlayerId, gameState, updateGameData, endGame
                 <div
                   key={p.id}
                   className={`flex items-center gap-3 rounded-xl p-3 border ${
-                    isSm ? 'bg-neon-blue/10 border-neon-blue/30' : 'bg-surface-light border-border/30'
+                    isSm ? 'bg-accent-blue/10 border-accent-blue/30' : 'bg-elevated border-border/30'
                   }`}
                 >
                   <img src={p.avatar} alt="" className="w-7 h-7 rounded-full" />
                   <span className="text-sm font-medium flex-1">{getPlayerName(p.id)}</span>
                   <span className={`text-xs font-display px-2 py-0.5 rounded-md ${
-                    isSm ? 'bg-neon-blue/15 text-neon-blue' : 'bg-surface-light text-text-muted'
+                    isSm ? 'bg-accent-blue/15 text-accent-blue' : 'bg-elevated text-text-muted'
                   }`}>
                     {isSm ? '🔍 Maître-espion' : '🕵️ Devineur'}
                   </span>
@@ -493,7 +493,7 @@ function CodenamesGame({ players, myPlayerId, gameState, updateGameData, endGame
           <div className="text-center">
             <button
               onClick={startGame}
-              className="bg-neon-blue/10 border border-neon-blue/20 text-neon-blue rounded-xl px-6 py-3 font-medium hover:bg-neon-blue/20 transition-colors"
+              className="bg-accent-blue/10 border border-accent-blue/20 text-accent-blue rounded-xl px-6 py-3 font-medium hover:bg-accent-blue/20 transition-colors"
             >
               Commencer
             </button>
@@ -515,7 +515,7 @@ function CodenamesGame({ players, myPlayerId, gameState, updateGameData, endGame
         {isClassic ? (
           <>
             <div className="flex items-center gap-2">
-              <span className="font-display text-lg text-neon-blue">{blueRemaining}</span>
+              <span className="font-display text-lg text-accent-blue">{blueRemaining}</span>
               <span className="text-xs text-text-muted">🔵 restants</span>
             </div>
             <div className="flex-1 text-center">
@@ -528,20 +528,20 @@ function CodenamesGame({ players, myPlayerId, gameState, updateGameData, endGame
                 </div>
               )}
               {phase === 'clue' && (
-                <span className={`text-sm font-medium ${currentTeam === 'blue' ? 'text-neon-blue' : 'text-neon-pink'}`}>
+                <span className={`text-sm font-medium ${currentTeam === 'blue' ? 'text-accent-blue' : 'text-accent-pink'}`}>
                   Tour {currentTeam === 'blue' ? '🔵 Bleu' : '🔴 Rouge'}
                 </span>
               )}
             </div>
             <div className="flex items-center gap-2">
               <span className="text-xs text-text-muted">🔴 restants</span>
-              <span className="font-display text-lg text-neon-pink">{redRemaining}</span>
+              <span className="font-display text-lg text-accent-pink">{redRemaining}</span>
             </div>
           </>
         ) : (
           <>
             <div className="flex items-center gap-2">
-              <span className="font-display text-lg text-neon-blue">{teamRemaining}</span>
+              <span className="font-display text-lg text-accent-blue">{teamRemaining}</span>
               <span className="text-xs text-text-muted">mots restants</span>
             </div>
             <div className="flex-1 text-center">
@@ -556,7 +556,7 @@ function CodenamesGame({ players, myPlayerId, gameState, updateGameData, endGame
             </div>
             <div className="flex items-center gap-2">
               <span className="text-xs text-text-muted">tours restants</span>
-              <span className="font-display text-lg text-neon-pink">{turnsLeft}</span>
+              <span className="font-display text-lg text-accent-pink">{turnsLeft}</span>
             </div>
           </>
         )}
@@ -567,7 +567,7 @@ function CodenamesGame({ players, myPlayerId, gameState, updateGameData, endGame
         <div className="flex justify-center">
           <button
             onClick={() => setSpymasterView(v => !v)}
-            className="flex items-center gap-2 text-xs text-text-muted hover:text-text-secondary transition-colors px-3 py-1.5 rounded-lg bg-surface-light border border-border/30"
+            className="flex items-center gap-2 text-xs text-text-muted hover:text-text-secondary transition-colors px-3 py-1.5 rounded-lg bg-elevated border border-border/30"
           >
             {spymasterView ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
             {spymasterView ? 'Masquer les couleurs' : 'Voir les couleurs'}
@@ -610,7 +610,7 @@ function CodenamesGame({ players, myPlayerId, gameState, updateGameData, endGame
           animate={{ opacity: 1, y: 0 }}
           className="space-y-3"
         >
-          <p className="text-neon-blue text-sm font-medium text-center">
+          <p className="text-accent-blue text-sm font-medium text-center">
             Donne un indice à ton équipe !
           </p>
           <div className="flex gap-2">
@@ -622,12 +622,12 @@ function CodenamesGame({ players, myPlayerId, gameState, updateGameData, endGame
               placeholder="Un seul mot..."
               maxLength={30}
               autoFocus
-              className="flex-1 bg-surface-light border border-neon-blue/30 rounded-xl px-4 py-3 text-text-primary placeholder:text-text-muted focus:outline-none focus:border-neon-blue/50 transition-colors"
+              className="flex-1 bg-elevated border border-accent-blue/30 rounded-xl px-4 py-3 text-text-primary placeholder:text-text-muted focus:outline-none focus:border-accent-blue/50 transition-colors"
             />
             <button
               onClick={submitClue}
               disabled={!clueInput.trim()}
-              className="bg-neon-blue/10 border border-neon-blue/20 text-neon-blue rounded-xl px-4 py-3 hover:bg-neon-blue/20 transition-colors disabled:opacity-30"
+              className="bg-accent-blue/10 border border-accent-blue/20 text-accent-blue rounded-xl px-4 py-3 hover:bg-accent-blue/20 transition-colors disabled:opacity-30"
             >
               <Send className="w-5 h-5" />
             </button>
@@ -640,8 +640,8 @@ function CodenamesGame({ players, myPlayerId, gameState, updateGameData, endGame
                 onClick={() => setClueNumInput(n)}
                 className={`w-8 h-8 rounded-lg text-sm font-medium transition-all ${
                   clueNumInput === n
-                    ? 'bg-neon-blue/20 border border-neon-blue/40 text-neon-blue'
-                    : 'bg-surface-light border border-border/30 text-text-secondary hover:border-border/60'
+                    ? 'bg-accent-blue/20 border border-accent-blue/40 text-accent-blue'
+                    : 'bg-elevated border border-border/30 text-text-secondary hover:border-border/60'
                 }`}
               >
                 {n}
@@ -666,12 +666,12 @@ function CodenamesGame({ players, myPlayerId, gameState, updateGameData, endGame
         <div className="space-y-2">
           {canIGuess() && (
             <div className="flex items-center justify-between">
-              <p className="text-sm text-neon-blue">
+              <p className="text-sm text-accent-blue">
                 Clique sur un mot ! ({guessesRemaining} essai{(guessesRemaining ?? 0) > 1 ? 's' : ''} restant{(guessesRemaining ?? 0) > 1 ? 's' : ''})
               </p>
               <button
                 onClick={endTurn}
-                className="flex items-center gap-1.5 text-xs bg-surface-light border border-border/30 text-text-secondary rounded-lg px-3 py-1.5 hover:border-border/60 transition-colors"
+                className="flex items-center gap-1.5 text-xs bg-elevated border border-border/30 text-text-secondary rounded-lg px-3 py-1.5 hover:border-border/60 transition-colors"
               >
                 <SkipForward className="w-3.5 h-3.5" />
                 Fin du tour
@@ -702,28 +702,28 @@ function CodenamesGame({ players, myPlayerId, gameState, updateGameData, endGame
             {winner === 'lost' ? (
               <>
                 <Skull className="w-10 h-10 text-text-muted mx-auto mb-2" />
-                <p className="font-display text-2xl text-neon-pink">Perdu !</p>
+                <p className="font-display text-2xl text-accent-pink">Perdu !</p>
                 <p className="text-text-muted text-sm mt-1">
                   {winReason === 'assassin' ? "L'assassin a été révélé !" : 'Plus de tours !'}
                 </p>
               </>
             ) : winner === 'blue' ? (
               <>
-                <p className="font-display text-2xl text-neon-blue">🔵 L'équipe Bleu gagne !</p>
+                <p className="font-display text-2xl text-accent-blue">🔵 L'équipe Bleu gagne !</p>
                 <p className="text-text-muted text-sm mt-1">
                   {winReason === 'assassin' ? "L'équipe Rouge a touché l'assassin !" : 'Tous les mots bleus trouvés !'}
                 </p>
               </>
             ) : winner === 'red' ? (
               <>
-                <p className="font-display text-2xl text-neon-pink">🔴 L'équipe Rouge gagne !</p>
+                <p className="font-display text-2xl text-accent-pink">🔴 L'équipe Rouge gagne !</p>
                 <p className="text-text-muted text-sm mt-1">
                   {winReason === 'assassin' ? "L'équipe Bleu a touché l'assassin !" : 'Tous les mots rouges trouvés !'}
                 </p>
               </>
             ) : (
               <>
-                <p className="font-display text-2xl text-neon-blue">Victoire ! 🎉</p>
+                <p className="font-display text-2xl text-accent-blue">Victoire ! 🎉</p>
                 <p className="text-text-muted text-sm mt-1">
                   Tous les mots trouvés
                   {data.maxTurns ? ` en ${(data.maxTurns as number) - (turnsLeft ?? 0)} tour${((data.maxTurns as number) - (turnsLeft ?? 0)) > 1 ? 's' : ''} !` : ' !'}
@@ -736,7 +736,7 @@ function CodenamesGame({ players, myPlayerId, gameState, updateGameData, endGame
           <div className="text-center">
             <button
               onClick={finishGame}
-              className="bg-neon-blue/10 border border-neon-blue/20 text-neon-blue rounded-xl px-6 py-3 font-medium hover:bg-neon-blue/20 transition-colors"
+              className="bg-accent-blue/10 border border-accent-blue/20 text-accent-blue rounded-xl px-6 py-3 font-medium hover:bg-accent-blue/20 transition-colors"
             >
               Terminer
             </button>
@@ -750,7 +750,7 @@ function CodenamesGame({ players, myPlayerId, gameState, updateGameData, endGame
           <p className="text-xs text-text-muted text-center">
             {isSpymaster ? '🔍 Tu es Maître-espion' : '🕵️ Tu es Devineur'}
             {isClassic && myTeam && (
-              <span className={myTeam === 'blue' ? ' text-neon-blue' : ' text-neon-pink'}>
+              <span className={myTeam === 'blue' ? ' text-accent-blue' : ' text-accent-pink'}>
                 {' '}— Équipe {myTeam === 'blue' ? '🔵 Bleu' : '🔴 Rouge'}
               </span>
             )}

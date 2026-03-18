@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'motion/react'
-import { ArrowLeft, Trophy, RotateCcw, DoorOpen } from 'lucide-react'
+import { RotateCcw, DoorOpen, Trophy } from 'lucide-react'
 import { registry } from '@/lib/registry'
 import { useRoomStore } from '@/stores/roomStore'
 import { useRoom } from '@/hooks/useRoom'
@@ -40,82 +40,17 @@ export default function GameWrapper() {
   }
 
   return (
-    <div className="space-y-6">
-      {/* Game header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <button
-            onClick={handleLeave}
-            className="w-10 h-10 rounded-xl bg-surface border border-border/50 flex items-center justify-center text-text-secondary hover:text-text-primary hover:border-border-light transition-all"
-            title="Quitter la room"
+    <div className="flex h-[calc(100vh-56px-2rem)] -mx-6 -my-8">
+      {/* Game area - fills remaining space */}
+      <div className="flex-1 flex flex-col min-w-0">
+        {/* Game component */}
+        {gameState.status !== 'finished' ? (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.2 }}
+            className="flex-1 flex items-center justify-center"
           >
-            <ArrowLeft className="w-4 h-4" />
-          </button>
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="text-xl">{game.emoji}</span>
-              <h1 className="font-display text-2xl tracking-wide">{game.name}</h1>
-            </div>
-            <p className="text-text-muted text-sm">
-              Round {gameState.round}
-              {game.config.defaultRounds ? ` / ${game.config.defaultRounds}` : ''}
-              {' · Room '}
-              {room.code}
-            </p>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2">
-          {gameState.status === 'finished' && isHost && (
-            <>
-              <button
-                onClick={handleBackToLobby}
-                className="flex items-center gap-2 bg-surface border border-border/50 text-text-secondary rounded-xl px-4 py-2.5 text-sm font-medium hover:text-text-primary hover:border-border-light transition-colors"
-              >
-                <DoorOpen className="w-4 h-4" />
-                Lobby
-              </button>
-              <button
-                onClick={handleRestart}
-                className="flex items-center gap-2 bg-neon-green/10 border border-neon-green/20 text-neon-green rounded-xl px-4 py-2.5 text-sm font-medium hover:bg-neon-green/20 transition-colors"
-              >
-                <RotateCcw className="w-4 h-4" />
-                Rejouer
-              </button>
-            </>
-          )}
-        </div>
-      </div>
-
-      {/* Finished overlay */}
-      {gameState.status === 'finished' && (
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="gradient-border"
-        >
-          <div className="p-6 text-center">
-            <Trophy className="w-10 h-10 text-neon-yellow mx-auto mb-3" />
-            <h2 className="font-display text-xl mb-4">Partie terminee !</h2>
-            <Scoreboard players={players} scores={gameState.scores} />
-          </div>
-        </motion.div>
-      )}
-
-      {/* Scoreboard (during game) */}
-      {gameState.status === 'playing' && (
-        <Scoreboard players={players} scores={gameState.scores} compact />
-      )}
-
-      {/* Game component */}
-      {gameState.status !== 'finished' && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.2 }}
-          className="gradient-border"
-        >
-          <div className="p-6">
             <GameComponent
               players={players}
               myPlayerId={socketId ?? ''}
@@ -126,9 +61,94 @@ export default function GameWrapper() {
               nextRound={nextRound}
               endGame={endGame}
             />
+          </motion.div>
+        ) : (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="flex-1 flex flex-col items-center justify-center gap-[16px] px-[20px]"
+          >
+            <Trophy className="w-[40px] h-[40px] text-accent-orange" />
+            <h2 className="font-display text-[22px] font-bold tracking-wide text-text-primary">
+              Partie terminee !
+            </h2>
+            {isHost && (
+              <div className="flex items-center gap-[12px] mt-[8px]">
+                <button
+                  onClick={handleBackToLobby}
+                  className="flex items-center gap-[8px] bg-elevated border border-border rounded-[8px] px-[16px] py-[10px] text-[13px] font-semibold font-body text-text-secondary hover:text-text-primary hover:border-text-muted transition-colors"
+                >
+                  <DoorOpen className="w-[16px] h-[16px]" />
+                  Lobby
+                </button>
+                <button
+                  onClick={handleRestart}
+                  className="flex items-center gap-[8px] bg-accent/10 border border-accent/20 text-accent rounded-[8px] px-[16px] py-[10px] text-[13px] font-semibold font-body hover:bg-accent/20 transition-colors"
+                >
+                  <RotateCcw className="w-[16px] h-[16px]" />
+                  Rejouer
+                </button>
+              </div>
+            )}
+          </motion.div>
+        )}
+      </div>
+
+      {/* Side panel */}
+      <div className="w-[320px] shrink-0 bg-card border-l border-border flex flex-col gap-[16px] p-[20px] overflow-y-auto">
+        {/* Game info row */}
+        <div className="flex items-center justify-between w-full">
+          <div className="flex items-center gap-[8px]">
+            <span className="text-[16px]">{game.emoji}</span>
+            <span className="font-display text-[12px] font-bold tracking-[1px] text-text-primary uppercase">
+              {game.name}
+            </span>
           </div>
-        </motion.div>
-      )}
+          <div className="flex items-center gap-[10px]">
+            <span className="font-mono text-[10px] text-text-muted bg-elevated rounded-[5px] px-[8px] py-[3px]">
+              {room.code}
+            </span>
+            <span className="font-mono text-[10px] text-text-muted">
+              {players.length} joueur{players.length > 1 ? 's' : ''}
+            </span>
+          </div>
+        </div>
+
+        {/* Round info / Stats overlay */}
+        <div className="flex items-center gap-[32px] bg-elevated rounded-[8px] px-[14px] py-[12px] w-full">
+          <div className="flex flex-col gap-[2px]">
+            <span className="font-display text-[10px] font-semibold tracking-[2px] text-text-muted">
+              ROUND
+            </span>
+            <span className="font-mono text-[22px] font-bold text-accent">
+              {gameState.round}
+              {game.config.defaultRounds ? `/${game.config.defaultRounds}` : ''}
+            </span>
+          </div>
+          <div className="flex flex-col gap-[2px]">
+            <span className="font-display text-[10px] font-semibold tracking-[2px] text-text-muted">
+              JOUEURS
+            </span>
+            <span className="font-mono text-[22px] font-bold text-text-primary">
+              {players.length}
+            </span>
+          </div>
+        </div>
+
+        {/* Scoreboard title */}
+        <div className="flex items-center justify-between w-full">
+          <span className="font-display text-[12px] font-bold tracking-[1px] text-accent">
+            CLASSEMENT
+          </span>
+        </div>
+
+        {/* Scoreboard */}
+        {gameState.status === 'finished' ? (
+          <Scoreboard players={players} scores={gameState.scores} />
+        ) : (
+          <Scoreboard players={players} scores={gameState.scores} compact />
+        )}
+      </div>
     </div>
   )
 }

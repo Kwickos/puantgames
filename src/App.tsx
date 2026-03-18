@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Layout from '@/components/Layout'
 import Home from '@/pages/Home'
 import Room from '@/pages/Room'
+import Rooms from '@/pages/Rooms'
 import Leaderboard from '@/pages/Leaderboard'
 import Admin from '@/pages/Admin'
 import { useSocketLifecycle } from '@/hooks/useSocket'
@@ -30,6 +31,7 @@ export default function App() {
       <Routes>
         <Route element={<Layout />}>
           <Route path="/" element={<Home />} />
+          <Route path="/rooms" element={<Rooms />} />
           <Route path="/room/:code" element={<Room />} />
           <Route path="/leaderboard" element={<Leaderboard />} />
           <Route path="/admin" element={<Admin />} />

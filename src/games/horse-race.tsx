@@ -54,7 +54,7 @@ function HorseRaceGame({ players, myPlayerId, gameState, updateScore, endGame }:
           animate={{ opacity: 1, scale: 1 }}
           className="text-center py-3"
         >
-          <p className="font-display text-2xl text-neon-yellow">
+          <p className="font-display text-2xl text-accent-orange">
             <img src={winner.avatar} alt="" className="w-8 h-8 rounded-full inline align-middle" /> {winner.id === myPlayerId ? 'Tu as gagné !' : `${winner.name} a gagné !`}
           </p>
         </motion.div>
@@ -73,17 +73,17 @@ function HorseRaceGame({ players, myPlayerId, gameState, updateScore, endGame }:
               {/* Player label */}
               <div className="flex items-center gap-2 mb-1">
                 <img src={player.avatar} alt="" className="w-5 h-5 rounded-full" />
-                <span className={`text-sm font-medium ${isMe ? 'text-neon-green' : 'text-text-secondary'}`}>
+                <span className={`text-sm font-medium ${isMe ? 'text-accent' : 'text-text-secondary'}`}>
                   {isMe ? 'Toi' : player.name}
                 </span>
                 <span className="text-xs text-text-muted ml-auto">{score}/{finishLine}</span>
               </div>
 
               {/* Track */}
-              <div className="relative h-10 bg-surface-light rounded-lg border border-border/30 overflow-hidden">
+              <div className="relative h-10 bg-elevated rounded-lg border border-border/30 overflow-hidden">
                 {/* Finish line */}
-                <div className="absolute right-0 top-0 bottom-0 w-1 bg-neon-yellow/40 z-10" />
-                <div className="absolute right-0 top-0 bottom-0 w-6 bg-gradient-to-l from-neon-yellow/10 to-transparent z-10" />
+                <div className="absolute right-0 top-0 bottom-0 w-1 bg-accent-orange/40 z-10" />
+                <div className="absolute right-0 top-0 bottom-0 w-6 bg-gradient-to-l from-accent-orange/10 to-transparent z-10" />
 
                 {/* Progress bar */}
                 <motion.div
@@ -117,8 +117,8 @@ function HorseRaceGame({ players, myPlayerId, gameState, updateScore, endGame }:
             animate={justPressed ? { scale: [1, 0.92, 1] } : {}}
             transition={{ duration: 0.1 }}
           >
-            <div className="inline-flex items-center gap-3 bg-surface-light border border-border/50 rounded-2xl px-8 py-4">
-              <kbd className="bg-surface border border-border-light rounded-lg px-5 py-2 font-display text-lg text-text-primary shadow-[0_2px_0_0_var(--color-border)]">
+            <div className="inline-flex items-center gap-3 bg-elevated border border-border/50 rounded-2xl px-8 py-4">
+              <kbd className="bg-card border border-border-light rounded-lg px-5 py-2 font-display text-lg text-text-primary shadow-[0_2px_0_0_var(--color-border)]">
                 ESPACE
               </kbd>
               <span className="text-text-muted text-sm">pour avancer</span>

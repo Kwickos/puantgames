@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Check, Link } from 'lucide-react'
+import { Copy, Check } from 'lucide-react'
 
 export default function RoomCodeDisplay({ code }: { code: string }) {
   const [copied, setCopied] = useState(false)
@@ -13,29 +13,32 @@ export default function RoomCodeDisplay({ code }: { code: string }) {
   }
 
   return (
-    <div className="gradient-border">
-      <div className="p-6 text-center">
-        <p className="text-text-muted text-xs uppercase tracking-wider mb-2">Code de la room</p>
-        <p className="font-display text-5xl tracking-[0.3em] text-neon-green text-glow-green mb-4">
+    <div className="bg-elevated rounded-[12px] border border-border-subtle p-[14px] flex flex-col gap-[8px]">
+      {/* Label */}
+      <span className="font-mono text-[10px] font-medium tracking-[1.5px] text-text-muted">
+        CODE DE LA ROOM
+      </span>
+
+      {/* Code row */}
+      <div className="flex items-center justify-between">
+        <span className="font-display text-[28px] font-extrabold tracking-[6px] text-accent">
           {code}
-        </p>
+        </span>
         <button
           onClick={copyLink}
-          className="inline-flex items-center gap-2 text-sm text-text-secondary hover:text-text-primary bg-surface-light px-4 py-2 rounded-lg transition-colors"
+          className="flex items-center justify-center bg-elevated rounded-[6px] px-[10px] py-[6px] hover:bg-border-subtle transition-colors"
         >
           {copied ? (
-            <>
-              <Check className="w-4 h-4 text-neon-green" />
-              <span className="text-neon-green">Lien copie !</span>
-            </>
+            <Check className="w-[14px] h-[14px] text-accent" />
           ) : (
-            <>
-              <Link className="w-4 h-4" />
-              <span>Copier le lien d'invitation</span>
-            </>
+            <Copy className="w-[14px] h-[14px] text-text-secondary" />
           )}
         </button>
       </div>
+
+      {copied && (
+        <span className="text-accent text-[11px] font-medium">Lien copie !</span>
+      )}
     </div>
   )
 }
