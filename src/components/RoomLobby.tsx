@@ -33,7 +33,7 @@ export default function RoomLobby() {
   }
 
   return (
-    <div className="flex -mx-6 -my-8 min-h-[calc(100vh-56px)]">
+    <div className="flex flex-1 min-h-0">
 
       {/* ─── MAIN AREA (left, flex-1) ─── */}
       <div className="flex-1 flex flex-col gap-[20px] p-[24px] min-w-0">

@@ -40,7 +40,7 @@ export default function GameWrapper() {
   }
 
   return (
-    <div className="flex h-[calc(100vh-56px-2rem)] -mx-6 -my-8">
+    <div className="flex flex-1 min-h-0">
       {/* Game area - fills remaining space */}
       <div className="flex-1 flex flex-col min-w-0">
         {/* Game component */}

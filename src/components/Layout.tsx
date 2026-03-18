@@ -30,8 +30,6 @@ export default function Layout() {
     setUserMenuOpen(false)
   }, [location.pathname])
 
-  const isAdmin = location.pathname.startsWith('/admin')
-
   const navLinkClass = ({ isActive }: { isActive: boolean }) =>
     `font-body text-[14px] transition-colors no-underline ${
       isActive
@@ -41,9 +39,8 @@ export default function Layout() {
 
   return (
     <div className="min-h-screen flex flex-col bg-page">
-      {/* Header — hidden on admin pages */}
-      {!isAdmin && (
-        <header className="flex items-center justify-between h-[56px] px-[24px] bg-card border-b border-border shrink-0">
+      {/* Header */}
+      <header className="flex items-center justify-between h-[56px] px-[24px] bg-card border-b border-border shrink-0">
           {/* Left: Logo */}
           <Link to="/" className="flex items-center gap-[10px] no-underline">
             <Gamepad2 className="w-[24px] h-[24px] text-accent" />
@@ -140,7 +137,6 @@ export default function Layout() {
             )}
           </div>
         </header>
-      )}
 
       {/* Content */}
       <main className="flex-1 flex flex-col">
