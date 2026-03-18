@@ -15,63 +15,44 @@ export default function Room() {
   const user = useAuthStore(s => s.user)
   const authLoading = useAuthStore(s => s.loading)
   const { joinRoom } = useRoom()
-  const [error, setError] = useState('')
   const [joining, setJoining] = useState(false)
+  const [ready, setReady] = useState(false)
 
   // Redirect to Discord login if not authenticated
   useEffect(() => {
     if (!authLoading && !user) {
-      // Save the room code so we can rejoin after auth
       if (code) saveRoomCode(code.toUpperCase())
       window.location.href = '/api/auth/discord'
     }
   }, [authLoading, user, code])
 
-  // Auto-join when connected and we have a saved room code
+  // Auto-join when connected
   useEffect(() => {
     if (!user || !connected || !code) return
-    if (room && room.code === code.toUpperCase()) return
+    if (room && room.code === code.toUpperCase()) {
+      setReady(true)
+      return
+    }
     if (joining) return
 
-    // Save room code for reconnection
     saveRoomCode(code.toUpperCase())
 
     setJoining(true)
     joinRoom(code).then(res => {
       setJoining(false)
-      if (!res.ok) {
+      if (res.ok) {
+        setReady(true)
+      } else {
+        // Room introuvable — redirect immédiatement
         reset()
-        setError(res.error ?? 'Impossible de rejoindre')
-        setTimeout(() => navigate('/'), 2000)
+        navigate('/', { replace: true })
       }
     })
   }, [user, connected, code, room, joining, joinRoom, navigate, reset])
 
-  if (authLoading || !user) {
-    return (
-      <div className="text-center py-20">
-        <div className="w-8 h-8 border-2 border-accent border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-        <p className="text-text-muted">Chargement...</p>
-      </div>
-    )
-  }
-
-  if (error) {
-    return (
-      <div className="text-center py-20">
-        <p className="text-accent-red text-lg mb-2">{error}</p>
-        <p className="text-text-muted text-sm">Redirection vers l'accueil...</p>
-      </div>
-    )
-  }
-
-  if (!room || room.code !== code?.toUpperCase()) {
-    return (
-      <div className="text-center py-20">
-        <div className="w-8 h-8 border-2 border-accent border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-        <p className="text-text-muted">Connexion a la room...</p>
-      </div>
-    )
+  // Don't render anything until we're ready — avoids flash
+  if (!ready || !room || room.code !== code?.toUpperCase()) {
+    return null
   }
 
   if (room.gameState.status === 'lobby') {
