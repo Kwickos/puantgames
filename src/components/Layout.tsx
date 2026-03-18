@@ -1,5 +1,5 @@
 import { Outlet, Link, NavLink, useLocation } from 'react-router-dom'
-import { Gamepad2, LogOut, ChevronDown } from 'lucide-react'
+import { Gamepad2, LogOut, ChevronDown, Shield } from 'lucide-react'
 import { motion, AnimatePresence } from 'motion/react'
 import { useState, useRef, useEffect } from 'react'
 import { useRoomStore } from '@/stores/roomStore'
@@ -66,9 +66,9 @@ export default function Layout() {
                 <NavLink to="/leaderboard" className={navLinkClass}>
                   Classement
                 </NavLink>
-                <NavLink to="/games" className={navLinkClass}>
+                <span className="font-body text-[14px] font-medium text-text-muted cursor-not-allowed select-none">
                   Jeux
-                </NavLink>
+                </span>
               </>
             )}
           </nav>
@@ -111,13 +111,22 @@ export default function Layout() {
                           {user.globalName ?? user.username}
                         </p>
                       </div>
-                      <div className="p-1.5">
+                      <div className="p-1.5 flex flex-col">
+                        {user.isAdmin && (
+                          <Link
+                            to="/admin"
+                            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-text-secondary hover:text-accent hover:bg-accent/5 transition-colors no-underline"
+                          >
+                            <Shield className="w-4 h-4" />
+                            Administration
+                          </Link>
+                        )}
                         <button
                           onClick={logout}
                           className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-text-secondary hover:text-accent-pink hover:bg-accent-pink/5 transition-colors"
                         >
                           <LogOut className="w-4 h-4" />
-                          Deconnexion
+                          Déconnexion
                         </button>
                       </div>
                     </motion.div>
@@ -126,15 +135,6 @@ export default function Layout() {
               </div>
             )}
 
-            {/* Admin link (text only, no icon, no special styling) */}
-            {!room && user?.isAdmin && (
-              <Link
-                to="/admin"
-                className="font-body text-[14px] font-medium text-text-secondary hover:text-text-primary transition-colors no-underline ml-[32px]"
-              >
-                Admin
-              </Link>
-            )}
           </div>
         </header>
 
