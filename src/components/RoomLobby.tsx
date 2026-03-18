@@ -222,7 +222,7 @@ function SettingRow({ setting, value, onChange }: {
   return (
     <div className="flex flex-col gap-[6px]">
       <span className="font-body text-[12px] font-semibold text-white">{setting.label}</span>
-      <div className="flex gap-[6px]">
+      <div className="flex flex-wrap gap-[6px]">
         {setting.options.map((opt) => {
           const active = opt.value === value
           return (
@@ -230,7 +230,7 @@ function SettingRow({ setting, value, onChange }: {
               key={opt.value}
               onClick={() => onChange?.(opt.value)}
               disabled={!onChange}
-              className={`flex-1 flex items-center justify-center rounded-[8px] px-[14px] py-[8px] font-mono text-[12px] transition-all ${
+              className={`flex items-center justify-center rounded-[8px] px-[14px] py-[8px] font-mono text-[12px] transition-all ${
                 active
                   ? 'bg-accent text-text-inverted font-semibold'
                   : onChange
