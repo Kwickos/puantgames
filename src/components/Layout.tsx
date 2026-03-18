@@ -51,26 +51,18 @@ export default function Layout() {
 
           {/* Center: Navigation */}
           <nav className="flex items-center gap-[32px]">
-            {room ? (
-              <span className="text-text-muted text-xs font-display tracking-wider">
-                ROOM {room.code}
-              </span>
-            ) : (
-              <>
-                <NavLink to="/" end className={navLinkClass}>
-                  Accueil
-                </NavLink>
-                <NavLink to="/rooms" className={navLinkClass}>
-                  Salons
-                </NavLink>
-                <NavLink to="/leaderboard" className={navLinkClass}>
-                  Classement
-                </NavLink>
-                <span className="font-body text-[14px] font-medium text-text-muted cursor-not-allowed select-none">
-                  Jeux
-                </span>
-              </>
-            )}
+            <NavLink to="/" end className={navLinkClass}>
+              Accueil
+            </NavLink>
+            <NavLink to="/rooms" className={navLinkClass}>
+              Salons
+            </NavLink>
+            <NavLink to="/leaderboard" className={navLinkClass}>
+              Classement
+            </NavLink>
+            <span className="font-body text-[14px] font-medium text-text-muted cursor-not-allowed select-none">
+              Jeux
+            </span>
           </nav>
 
           {/* Right: User area */}
